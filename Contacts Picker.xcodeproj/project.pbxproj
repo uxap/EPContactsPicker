@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E210822E1D916C6F002CCAD5 /* EPContactsPicker.podspec in Resources */ = {isa = PBXBuildFile; fileRef = E210822D1D916C6F002CCAD5 /* EPContactsPicker.podspec */; };
+		2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E5DD61E8A0684000CB16A /* ViewController2.swift */; };
 		F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */; };
 		F4C1C9491BDF8AB7001AA643 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */; };
 		F4C1C94C1BDF8AB7001AA643 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C94A1BDF8AB7001AA643 /* LaunchScreen.storyboard */; };
@@ -22,8 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C8E5DD21E8A010D000CB16A /* UXContactsPicker.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UXContactsPicker.podspec; sourceTree = "<group>"; };
+		2C8E5DD61E8A0684000CB16A /* ViewController2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController2.swift; sourceTree = "<group>"; };
 		4B7552C01CD28ADA00C638F1 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
-		E210822D1D916C6F002CCAD5 /* EPContactsPicker.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EPContactsPicker.podspec; sourceTree = "<group>"; };
 		F4C1C93E1BDF8AB7001AA643 /* Contacts Picker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Contacts Picker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -53,8 +54,8 @@
 		F4C1C9351BDF8AB7001AA643 = {
 			isa = PBXGroup;
 			children = (
+				2C8E5DD21E8A010D000CB16A /* UXContactsPicker.podspec */,
 				4B7552C01CD28ADA00C638F1 /* .travis.yml */,
-				E210822D1D916C6F002CCAD5 /* EPContactsPicker.podspec */,
 				F4C1C9401BDF8AB7001AA643 /* Contacts Picker */,
 				F4C1C93F1BDF8AB7001AA643 /* Products */,
 			);
@@ -73,6 +74,7 @@
 			children = (
 				F4C1C9751BDF9227001AA643 /* EPContactsPicker */,
 				F4C1C9701BDF8BBA001AA643 /* ViewController.swift */,
+				2C8E5DD61E8A0684000CB16A /* ViewController2.swift */,
 				F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */,
 				F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */,
 				F4C1C9721BDF8BE3001AA643 /* Main.storyboard */,
@@ -159,7 +161,6 @@
 				F4C1C9491BDF8AB7001AA643 /* Assets.xcassets in Resources */,
 				F4C1C9741BDF8BE3001AA643 /* Main.storyboard in Resources */,
 				F4C1C97F1BDF9227001AA643 /* EPContactCell.xib in Resources */,
-				E210822E1D916C6F002CCAD5 /* EPContactsPicker.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */,
+				2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */,
 				F4C1C9801BDF9227001AA643 /* EPContactsPicker.swift in Sources */,
 				F4C1C9711BDF8BBA001AA643 /* ViewController.swift in Sources */,
 				F4C1C97C1BDF9227001AA643 /* EPConstants.swift in Sources */,

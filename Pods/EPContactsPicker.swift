@@ -61,6 +61,17 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         reloadContacts()
     }
     
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let selectedRows = tableView.indexPathsForSelectedRows {
+            
+            selectedRows.forEach { selectedRow in
+                tableView.deselectRow(at: selectedRow, animated: false)
+            }
+        }
+    }
+    
     func initializeSearchBar() {
         self.resultSearchController = ( {
             let controller = UISearchController(searchResultsController: nil)
@@ -269,6 +280,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         if multiSelectEnabled  && selectedContacts.contains(where: { $0.contactId == contact.contactId }) {
             cell.accessoryType = UITableViewCellAccessoryType.checkmark
         }
+        
+        if !multiSelectEnabled {
+            cell.selectionStyle = .default
+        } else {
+            cell.selectionStyle = .none
+        }
 		
         cell.updateContactsinUI(contact, indexPath: indexPath, subtitleType: subtitleCellValue)
         return cell
@@ -294,11 +311,18 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         else {
             //Single selection code
 			resultSearchController.isActive = false
-			self.dismiss(animated: true, completion: {
-				DispatchQueue.main.async {
-					self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
-				}
-			})
+            
+            if self.presentingViewController != nil {
+                self.dismiss(animated: true, completion: {
+                    DispatchQueue.main.async {
+                        self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
+                    }
+                })
+            } else {
+                DispatchQueue.main.async {
+                    self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
+                }
+            }
         }
     }
     
