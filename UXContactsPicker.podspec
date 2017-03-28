@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "UXContactsPicker"
-  s.version          = "2.1.2"
+  s.version          = "2.1.4"
   s.summary          = "A contacts picker component for iOS written in swift using new contacts framwork"
   s.description      = <<-DESC
 Features
@@ -21,7 +21,7 @@ DESC
   s.frameworks = 'Contacts', 'ContactsUI'
   s.resources        = ["Pods/EPContactCell.xib"]
   s.resource_bundles = {
-    'EPContactsPicker' => ['Pods/**/*.xib']
+    'UXContactsPicker' => ['Pods/**/*.xib']
     }
 
 end
