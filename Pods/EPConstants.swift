@@ -17,7 +17,7 @@ struct EPGlobalConstants {
         static let contactsTitle = "Contacts"
         static let phoneNumberNotAvaialable = "No phone numbers available"
         static let emailNotAvaialable = "No emails available"
-        static let bundleIdentifier = "EPContactsPicker"
+        static let bundleIdentifier = "UXContactsPicker"
         static let cellNibIdentifier = "EPContactCell"
     }
 
