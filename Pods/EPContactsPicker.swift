@@ -310,19 +310,31 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
         else {
             //Single selection code
-			resultSearchController.isActive = false
             
-            if self.presentingViewController != nil {
-                self.dismiss(animated: true, completion: {
+            var delay = 0.0
+            if resultSearchController.isActive {
+                resultSearchController.isActive = false
+                delay = 0.3
+            }
+            
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                
+                if self.presentingViewController != nil {
+                    self.dismiss(animated: true, completion: {
+                        DispatchQueue.main.async {
+                            self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
+                        }
+                    })
+                } else {
                     DispatchQueue.main.async {
                         self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
                     }
-                })
-            } else {
-                DispatchQueue.main.async {
-                    self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
                 }
+                
             }
+            
+            
         }
     }
     

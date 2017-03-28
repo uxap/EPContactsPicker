@@ -46,6 +46,13 @@ extension ViewController2: EPPickerDelegate {
     }
     func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) {
         print(contact.phoneNumbers)
+        
+        if contact.phoneNumbers.count > 0 {
+            let alert = UIAlertController(title: "Selected Contact", message: contact.phoneNumbers[0].phoneNumber, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+        }
+        
     }
     
     func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) {
