@@ -64,6 +64,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        tableView.reloadData()
         if let selectedRows = tableView.indexPathsForSelectedRows {
             
             selectedRows.forEach { selectedRow in
@@ -314,7 +315,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             var delay = 0.0
             if resultSearchController.isActive {
                 resultSearchController.isActive = false
-                delay = 0.3
+                delay = 0.7
             }
             
             
