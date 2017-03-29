@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UXContactsPicker
 
 class ViewController: UIViewController, EPPickerDelegate {
 

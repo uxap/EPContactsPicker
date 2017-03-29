@@ -7,24 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A33853B1655FE5119BAA608 /* Pods_Contacts_Picker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 157C928B11466C590D3FC285 /* Pods_Contacts_Picker.framework */; };
 		2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E5DD61E8A0684000CB16A /* ViewController2.swift */; };
 		F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */; };
 		F4C1C9491BDF8AB7001AA643 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */; };
 		F4C1C94C1BDF8AB7001AA643 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C94A1BDF8AB7001AA643 /* LaunchScreen.storyboard */; };
 		F4C1C9711BDF8BBA001AA643 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9701BDF8BBA001AA643 /* ViewController.swift */; };
 		F4C1C9741BDF8BE3001AA643 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C9721BDF8BE3001AA643 /* Main.storyboard */; };
-		F4C1C97C1BDF9227001AA643 /* EPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9761BDF9227001AA643 /* EPConstants.swift */; };
-		F4C1C97D1BDF9227001AA643 /* EPContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9771BDF9227001AA643 /* EPContact.swift */; };
-		F4C1C97E1BDF9227001AA643 /* EPContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9781BDF9227001AA643 /* EPContactCell.swift */; };
-		F4C1C97F1BDF9227001AA643 /* EPContactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C9791BDF9227001AA643 /* EPContactCell.xib */; };
-		F4C1C9801BDF9227001AA643 /* EPContactsPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C97A1BDF9227001AA643 /* EPContactsPicker.swift */; };
-		F4C1C9811BDF9227001AA643 /* EPExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C97B1BDF9227001AA643 /* EPExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		157C928B11466C590D3FC285 /* Pods_Contacts_Picker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contacts_Picker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C8E5DD21E8A010D000CB16A /* UXContactsPicker.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UXContactsPicker.podspec; sourceTree = "<group>"; };
 		2C8E5DD61E8A0684000CB16A /* ViewController2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController2.swift; sourceTree = "<group>"; };
 		4B7552C01CD28ADA00C638F1 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		5118B7AD149CB243FF94F2BC /* Pods-Contacts Picker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contacts Picker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Contacts Picker/Pods-Contacts Picker.release.xcconfig"; sourceTree = "<group>"; };
+		F234BE9F254143EFBF094C8B /* Pods-Contacts Picker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Contacts Picker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Contacts Picker/Pods-Contacts Picker.debug.xcconfig"; sourceTree = "<group>"; };
 		F4C1C93E1BDF8AB7001AA643 /* Contacts Picker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Contacts Picker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -32,12 +30,6 @@
 		F4C1C94D1BDF8AB7001AA643 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4C1C9701BDF8BBA001AA643 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "Contacts Picker/ViewController.swift"; sourceTree = SOURCE_ROOT; };
 		F4C1C9731BDF8BE3001AA643 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		F4C1C9761BDF9227001AA643 /* EPConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPConstants.swift; sourceTree = "<group>"; };
-		F4C1C9771BDF9227001AA643 /* EPContact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPContact.swift; sourceTree = "<group>"; };
-		F4C1C9781BDF9227001AA643 /* EPContactCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPContactCell.swift; sourceTree = "<group>"; };
-		F4C1C9791BDF9227001AA643 /* EPContactCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EPContactCell.xib; sourceTree = "<group>"; };
-		F4C1C97A1BDF9227001AA643 /* EPContactsPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPContactsPicker.swift; sourceTree = "<group>"; };
-		F4C1C97B1BDF9227001AA643 /* EPExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,12 +37,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A33853B1655FE5119BAA608 /* Pods_Contacts_Picker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C508C7523EFFCA39AD86CAA1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				157C928B11466C590D3FC285 /* Pods_Contacts_Picker.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F4C1C9351BDF8AB7001AA643 = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +59,8 @@
 				4B7552C01CD28ADA00C638F1 /* .travis.yml */,
 				F4C1C9401BDF8AB7001AA643 /* Contacts Picker */,
 				F4C1C93F1BDF8AB7001AA643 /* Products */,
+				FAB7F726D6E443564ED69361 /* Pods */,
+				C508C7523EFFCA39AD86CAA1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,7 +75,6 @@
 		F4C1C9401BDF8AB7001AA643 /* Contacts Picker */ = {
 			isa = PBXGroup;
 			children = (
-				F4C1C9751BDF9227001AA643 /* EPContactsPicker */,
 				F4C1C9701BDF8BBA001AA643 /* ViewController.swift */,
 				2C8E5DD61E8A0684000CB16A /* ViewController2.swift */,
 				F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */,
@@ -84,19 +86,14 @@
 			path = "Contacts Picker";
 			sourceTree = "<group>";
 		};
-		F4C1C9751BDF9227001AA643 /* EPContactsPicker */ = {
+		FAB7F726D6E443564ED69361 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				F4C1C9761BDF9227001AA643 /* EPConstants.swift */,
-				F4C1C9771BDF9227001AA643 /* EPContact.swift */,
-				F4C1C9781BDF9227001AA643 /* EPContactCell.swift */,
-				F4C1C9791BDF9227001AA643 /* EPContactCell.xib */,
-				F4C1C97A1BDF9227001AA643 /* EPContactsPicker.swift */,
-				F4C1C97B1BDF9227001AA643 /* EPExtensions.swift */,
+				F234BE9F254143EFBF094C8B /* Pods-Contacts Picker.debug.xcconfig */,
+				5118B7AD149CB243FF94F2BC /* Pods-Contacts Picker.release.xcconfig */,
 			);
-			name = EPContactsPicker;
-			path = Pods;
-			sourceTree = SOURCE_ROOT;
+			name = Pods;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -105,9 +102,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F4C1C95B1BDF8AB7001AA643 /* Build configuration list for PBXNativeTarget "Contacts Picker" */;
 			buildPhases = (
+				838CADD576A7E2451FC72D31 /* [CP] Check Pods Manifest.lock */,
 				F4C1C93A1BDF8AB7001AA643 /* Sources */,
 				F4C1C93B1BDF8AB7001AA643 /* Frameworks */,
 				F4C1C93C1BDF8AB7001AA643 /* Resources */,
+				49A1E37DD83532AB188E895E /* [CP] Embed Pods Frameworks */,
+				657CFD2355EB8AB602437D15 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -160,11 +160,58 @@
 				F4C1C94C1BDF8AB7001AA643 /* LaunchScreen.storyboard in Resources */,
 				F4C1C9491BDF8AB7001AA643 /* Assets.xcassets in Resources */,
 				F4C1C9741BDF8BE3001AA643 /* Main.storyboard in Resources */,
-				F4C1C97F1BDF9227001AA643 /* EPContactCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		49A1E37DD83532AB188E895E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Contacts Picker/Pods-Contacts Picker-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		657CFD2355EB8AB602437D15 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Contacts Picker/Pods-Contacts Picker-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		838CADD576A7E2451FC72D31 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F4C1C93A1BDF8AB7001AA643 /* Sources */ = {
@@ -173,12 +220,7 @@
 			files = (
 				F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */,
 				2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */,
-				F4C1C9801BDF9227001AA643 /* EPContactsPicker.swift in Sources */,
 				F4C1C9711BDF8BBA001AA643 /* ViewController.swift in Sources */,
-				F4C1C97C1BDF9227001AA643 /* EPConstants.swift in Sources */,
-				F4C1C97E1BDF9227001AA643 /* EPContactCell.swift in Sources */,
-				F4C1C97D1BDF9227001AA643 /* EPContact.swift in Sources */,
-				F4C1C9811BDF9227001AA643 /* EPExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +336,7 @@
 		};
 		F4C1C95C1BDF8AB7001AA643 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F234BE9F254143EFBF094C8B /* Pods-Contacts Picker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
@@ -307,6 +350,7 @@
 		};
 		F4C1C95D1BDF8AB7001AA643 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5118B7AD149CB243FF94F2BC /* Pods-Contacts Picker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
