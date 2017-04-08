@@ -25,6 +25,12 @@ extension String {
     func containsAlphabets() -> Bool {
         //Checks if all the characters inside the string are alphabets
         let set = CharacterSet.letters
-        return self.utf16.contains( where: { return set.contains(UnicodeScalar($0)!)  } )
+        return self.utf16.contains( where: {
+            if let unicodeScaler = UnicodeScalar($0) {
+                return set.contains(unicodeScaler)
+            } else {
+                return false
+            }
+        } )
     }
 }
