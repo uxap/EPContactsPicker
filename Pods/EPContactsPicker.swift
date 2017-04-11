@@ -198,6 +198,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 var contactsArray = [CNContact]()
                 
                 let contactFetchRequest = CNContactFetchRequest(keysToFetch: allowedContactKeys())
+                let sortOrder = CNContactsUserDefaults.shared().sortOrder
+                contactFetchRequest.sortOrder = sortOrder
                 
                 do {
                     try contactsStore?.enumerateContacts(with: contactFetchRequest, usingBlock: { (contact, stop) -> Void in
@@ -205,7 +207,19 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                         contactsArray.append(contact)
                         var key: String = "#"
                         //If ordering has to be happening via family name change it here.
-                        if let firstLetter = contact.givenName[0..<1] , firstLetter.containsAlphabets() {
+
+                        let firstLetter: String? = {
+                            switch sortOrder {
+                            case .familyName:
+                                return contact.familyName[0..<1]
+                            case .givenName:
+                                return contact.givenName[0..<1]
+                            default:
+                                return contact.givenName[0..<1]
+                            }
+                        }()
+                        
+                        if let firstLetter = firstLetter , firstLetter.containsAlphabets() {
                             key = firstLetter.uppercased()
                         }
                         var contacts = [CNContact]()
