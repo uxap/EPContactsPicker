@@ -15,6 +15,7 @@ public struct EPContact {
     public var firstName: String
     public var lastName: String
     public var fullName: String?
+    public var attributedFullName: NSAttributedString?
     public let nameOrder: CNContactDisplayNameOrder
     public var company: String
     public var thumbnailProfileImage: UIImage?
@@ -69,6 +70,9 @@ public struct EPContact {
         
         nameOrder = CNContactFormatter.nameOrder(for: contact)
         fullName = CNContactFormatter.string(from: contact, style: .fullName)
+        attributedFullName =
+            CNContactFormatter.attributedString(
+                from: contact, style: .fullName, defaultAttributes: nil)
     }
 	
     public func displayName() -> String {
@@ -81,7 +85,7 @@ public struct EPContact {
             case .familyNameFirst:
                 return lastName + " " + firstName
             default:
-                return lastName + " " + firstName
+                return firstName + " " + lastName
             }
             
         }
@@ -90,12 +94,27 @@ public struct EPContact {
     public func contactInitials() -> String {
         var initials = String()
 		
-		if let firstNameFirstChar = firstName.characters.first {
-			initials.append(firstNameFirstChar)
+        let firstChar: Character?
+        let secondChar: Character?
+        switch nameOrder {
+        case .givenNameFirst:
+            firstChar = firstName.characters.first
+            secondChar = lastName.characters.first
+        case .familyNameFirst:
+            firstChar = lastName.characters.first
+            secondChar = firstName.characters.first
+        default:
+            firstChar = firstName.characters.first
+            secondChar = lastName.characters.first
+        }
+        
+        
+		if let firstChar = firstChar {
+			initials.append(firstChar)
 		}
 		
-		if let lastNameFirstChar = lastName.characters.first {
-			initials.append(lastNameFirstChar)
+		if let secondChar = secondChar {
+			initials.append(secondChar)
 		}
 		
         return initials
