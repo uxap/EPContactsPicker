@@ -9,18 +9,21 @@
 import UIKit
 import Contacts
 
-open class EPContact {
+public struct EPContact {
     
-    open var firstName: String
-    open var lastName: String
-    open var company: String
-    open var thumbnailProfileImage: UIImage?
-    open var profileImage: UIImage?
-    open var birthday: Date?
-    open var birthdayString: String?
-    open var contactId: String?
-    open var phoneNumbers = [(phoneNumber: String, phoneLabel: String)]()
-    open var emails = [(email: String, emailLabel: String )]()
+    let maxPhoneNumberCount = 5
+    public var firstName: String
+    public var lastName: String
+    public var fullName: String?
+    public let nameOrder: CNContactDisplayNameOrder
+    public var company: String
+    public var thumbnailProfileImage: UIImage?
+    public var profileImage: UIImage?
+    public var birthday: Date?
+    public var birthdayString: String?
+    public var contactId: String?
+    public var phoneNumbers = [(phoneNumber: String, phoneLabel: String)]()
+    public var emails = [(email: String, emailLabel: String )]()
 	
     public init (contact: CNContact) {
         firstName = contact.givenName
@@ -45,11 +48,16 @@ open class EPContact {
             birthdayString = dateFormatter.string(from: birthday!)
         }
         
+        var i = 0
 		for phoneNumber in contact.phoneNumbers {
 			guard let phoneLabel = phoneNumber.label else { continue }
 			let phone = phoneNumber.value.stringValue
 			
 			phoneNumbers.append((phone,phoneLabel))
+            i = i+1
+            if i > maxPhoneNumberCount {
+                break
+            }
 		}
 		
 		for emailAddress in contact.emailAddresses {
@@ -58,13 +66,28 @@ open class EPContact {
 			
 			emails.append((email,emailLabel))
 		}
+        
+        nameOrder = CNContactFormatter.nameOrder(for: contact)
+        fullName = CNContactFormatter.string(from: contact, style: .fullName)
     }
 	
-    open func displayName() -> String {
-        return firstName + " " + lastName
+    public func displayName() -> String {
+        if let fullName = fullName {
+            return fullName
+        } else {
+            switch nameOrder {
+            case .givenNameFirst:
+                return firstName + " " + lastName
+            case .familyNameFirst:
+                return lastName + " " + firstName
+            default:
+                return lastName + " " + firstName
+            }
+            
+        }
     }
     
-    open func contactInitials() -> String {
+    public func contactInitials() -> String {
         var initials = String()
 		
 		if let firstNameFirstChar = firstName.characters.first {
