@@ -258,7 +258,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             CNContactImageDataAvailableKey as CNKeyDescriptor,
             CNContactPhoneNumbersKey as CNKeyDescriptor,
             CNContactEmailAddressesKey as CNKeyDescriptor,
-            CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
+            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+            CNContactFormatter.descriptorForRequiredKeys(for: .phoneticFullName)
         ]
     }
     
