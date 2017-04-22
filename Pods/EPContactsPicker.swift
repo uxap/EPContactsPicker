@@ -66,14 +66,19 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
         tableView.reloadData()
         
-        let scrollTo = IndexPath(row: 0, section: 0)
-        tableView.scrollToRow(at: scrollTo, at: .top, animated: false)
+        if tableView.numberOfSections > 0 && tableView.numberOfRows(inSection: 0) > 0 {
+            
+            let scrollTo = IndexPath(row: 0, section: 0)
+            tableView.scrollToRow(at: scrollTo, at: .top, animated: false)
+        }
+        
         if let selectedRows = tableView.indexPathsForSelectedRows {
             
             selectedRows.forEach { selectedRow in
                 tableView.deselectRow(at: selectedRow, animated: false)
             }
         }
+        
     }
     
     func initializeSearchBar() {
