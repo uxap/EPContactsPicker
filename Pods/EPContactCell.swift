@@ -38,6 +38,12 @@ class EPContactCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contactContainerView.layer.masksToBounds = true
+        contactContainerView.layer.cornerRadius = contactContainerView.frame.size.width/2        
+    }
+    
     func updateInitialsColorForIndexPath(_ indexpath: IndexPath, style:EPContactPickerStyle? = nil) {
         //Applies color to Initial Label
         let colorArray = style?.initialBackgroundColors ?? [EPGlobalConstants.Colors.amethystColor,EPGlobalConstants.Colors.asbestosColor,EPGlobalConstants.Colors.emeraldColor,EPGlobalConstants.Colors.peterRiverColor,EPGlobalConstants.Colors.pomegranateColor,EPGlobalConstants.Colors.pumpkinColor,EPGlobalConstants.Colors.sunflowerColor]

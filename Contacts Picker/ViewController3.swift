@@ -19,7 +19,7 @@ class ViewController3 : UIViewController {
         style.rowHeight = 75
         style.photoLeftMargin = 16
         style.photoRightMargin = 16
-        style.photoSize = CGSize(width: 42, height: 42)
+        style.photoSize = CGSize(width: 40, height: 40)
         style.titleTopMargin = 17
         style.titleFont = UIFont.boldSystemFont(ofSize: 14)
         style.titleColor = UIColor.white
