@@ -10,6 +10,13 @@ import UIKit
 
 class EPContactCell: UITableViewCell {
 
+    @IBOutlet weak var photoLeftMargin: NSLayoutConstraint!
+    @IBOutlet weak var photoRightMargin: NSLayoutConstraint!
+    @IBOutlet weak var photoWidth: NSLayoutConstraint!
+    @IBOutlet weak var photoHeight: NSLayoutConstraint!
+    @IBOutlet weak var titleTopMargin: NSLayoutConstraint!
+    @IBOutlet weak var subtitleTopMargin: NSLayoutConstraint!
+    
     @IBOutlet weak var contactTextLabel: UILabel!
     @IBOutlet weak var contactDetailTextLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
@@ -31,14 +38,22 @@ class EPContactCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func updateInitialsColorForIndexPath(_ indexpath: IndexPath) {
+    func updateInitialsColorForIndexPath(_ indexpath: IndexPath, style:EPContactPickerStyle? = nil) {
         //Applies color to Initial Label
-        let colorArray = [EPGlobalConstants.Colors.amethystColor,EPGlobalConstants.Colors.asbestosColor,EPGlobalConstants.Colors.emeraldColor,EPGlobalConstants.Colors.peterRiverColor,EPGlobalConstants.Colors.pomegranateColor,EPGlobalConstants.Colors.pumpkinColor,EPGlobalConstants.Colors.sunflowerColor]
+        let colorArray = style?.initialBackgroundColors ?? [EPGlobalConstants.Colors.amethystColor,EPGlobalConstants.Colors.asbestosColor,EPGlobalConstants.Colors.emeraldColor,EPGlobalConstants.Colors.peterRiverColor,EPGlobalConstants.Colors.pomegranateColor,EPGlobalConstants.Colors.pumpkinColor,EPGlobalConstants.Colors.sunflowerColor]
         let randomValue = (indexpath.row + indexpath.section) % colorArray.count
         contactInitialLabel.backgroundColor = colorArray[randomValue]
+        
+        if let font = style?.initialFont {
+            contactInitialLabel.font = font
+        }
+        
+        if let color = style?.initialColor {
+            contactInitialLabel.textColor = color
+        }
     }
  
-    func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue) {
+    func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactPickerStyle? = nil) {
         self.contact = contact
         //Update all UI in the cell here
         self.contactTextLabel?.attributedText = contact.attributedFullName
@@ -49,7 +64,7 @@ class EPContactCell: UITableViewCell {
             self.contactInitialLabel.isHidden = true
         } else {
             self.contactInitialLabel.text = contact.contactInitials()
-            updateInitialsColorForIndexPath(indexPath)
+            updateInitialsColorForIndexPath(indexPath, style: style)
             self.contactImageView.isHidden = true
             self.contactInitialLabel.isHidden = false
         }

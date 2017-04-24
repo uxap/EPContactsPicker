@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A33853B1655FE5119BAA608 /* Pods_Contacts_Picker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 157C928B11466C590D3FC285 /* Pods_Contacts_Picker.framework */; };
+		2C8173991EAE1AD800ABD8CD /* ViewController3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8173981EAE1AD800ABD8CD /* ViewController3.swift */; };
 		2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E5DD61E8A0684000CB16A /* ViewController2.swift */; };
 		F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */; };
 		F4C1C9491BDF8AB7001AA643 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		157C928B11466C590D3FC285 /* Pods_Contacts_Picker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Contacts_Picker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C8173981EAE1AD800ABD8CD /* ViewController3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController3.swift; sourceTree = "<group>"; };
 		2C8E5DD21E8A010D000CB16A /* UXContactsPicker.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UXContactsPicker.podspec; sourceTree = "<group>"; };
 		2C8E5DD61E8A0684000CB16A /* ViewController2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController2.swift; sourceTree = "<group>"; };
 		4B7552C01CD28ADA00C638F1 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			children = (
 				F4C1C9701BDF8BBA001AA643 /* ViewController.swift */,
 				2C8E5DD61E8A0684000CB16A /* ViewController2.swift */,
+				2C8173981EAE1AD800ABD8CD /* ViewController3.swift */,
 				F4C1C9411BDF8AB7001AA643 /* AppDelegate.swift */,
 				F4C1C9481BDF8AB7001AA643 /* Assets.xcassets */,
 				F4C1C9721BDF8BE3001AA643 /* Main.storyboard */,
@@ -221,6 +224,7 @@
 			files = (
 				F4C1C9421BDF8AB7001AA643 /* AppDelegate.swift in Sources */,
 				2C8E5DD71E8A0684000CB16A /* ViewController2.swift in Sources */,
+				2C8173991EAE1AD800ABD8CD /* ViewController3.swift in Sources */,
 				F4C1C9711BDF8BBA001AA643 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

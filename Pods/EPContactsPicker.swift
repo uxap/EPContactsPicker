@@ -33,6 +33,49 @@ public enum SubtitleCellValue{
     case organization
 }
 
+public struct EPContactPickerStyle {
+    
+    public var rowHeight = CGFloat(60.0)
+    public var photoLeftMargin = CGFloat(10.0)
+    public var photoRightMargin = CGFloat(10.0)
+    public var photoSize = CGSize(width: 40.0, height: 40.0)
+    
+    public var titleFont = UIFont.systemFont(ofSize: 17.0)
+    public var titleColor = UIColor(colorLiteralRed: 85.0/255.0, green: 85.0/255.0, blue: 85.0/255.0, alpha: 1.0)
+    public var titleTopMargin = CGFloat(10.0)
+
+    public var subtitleFont = UIFont.systemFont(ofSize: 15.0)
+    public var subtitleColor = UIColor(colorLiteralRed: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0)
+    public var subtitleTopMargin = CGFloat(4)
+    
+    public var cellBackgroundColor = UIColor.white
+    public var backgroundColor = UIColor.white
+    public var seperatorColor: UIColor?
+    
+    public var initialFont = UIFont.systemFont(ofSize: 17)
+    public var initialColor = UIColor.white
+    public var initialBackgroundColors: [UIColor]?
+    
+    public var showIndexBar = true
+    public var showSearchBar = true
+    
+    public init() {
+    }
+    
+}
+
+public struct EPContactPickerHeaderStyle {
+    
+    public var font = UIFont.systemFont(ofSize: 15)
+    public var height = CGFloat(25)
+    public var backgroundColor = UIColor.lightGray
+    public var textColor = UIColor.black
+    public var leftMargin = CGFloat(10)
+    
+    public init() {}
+    
+}
+
 open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
     
     // MARK: - Properties
@@ -49,16 +92,40 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     var subtitleCellValue = SubtitleCellValue.phoneNumber
     var multiSelectEnabled: Bool = false //Default is single selection contact
     
+    public var style: EPContactPickerStyle? {
+        didSet {
+            if isViewLoaded {
+                if let style = style {
+                    setupTable(style: style)
+                }
+                tableView.reloadData()
+            }
+        }
+    }
+    
+    public var headerStyle: EPContactPickerHeaderStyle? {
+        didSet {
+            if isViewLoaded {
+                tableView.reloadData()
+            }
+        }
+    }
+    
     // MARK: - Lifecycle Methods
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        
         self.title = EPGlobalConstants.Strings.contactsTitle
 
         registerContactCell()
         inititlizeBarButtons()
         initializeSearchBar()
         reloadContacts()
+        
+        if let style = style {
+            setupTable(style: style)
+        }
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -82,6 +149,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     }
     
     func initializeSearchBar() {
+        
+        guard style?.showSearchBar ?? true else {
+            return
+        }
+        
         self.resultSearchController = ( {
             let controller = UISearchController(searchResultsController: nil)
             controller.searchResultsUpdater = self
@@ -147,6 +219,38 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         self.multiSelectEnabled = multiSelection
         contactDelegate = delegate
         subtitleCellValue = subtitleCellType
+    }
+    
+    // MARK: - Style
+    
+    func setupTable(style:EPContactPickerStyle) {
+        tableView.backgroundColor = style.backgroundColor
+        tableView.separatorColor = style.seperatorColor
+        
+        if (!style.showSearchBar) {
+            tableView.tableHeaderView = nil
+        } else {
+            initializeSearchBar()
+        }
+    }
+    
+    func setupCell(cell:EPContactCell, style:EPContactPickerStyle) {
+        
+        cell.photoLeftMargin.constant = style.photoLeftMargin
+        cell.photoRightMargin.constant = style.photoRightMargin
+        cell.photoWidth.constant = style.photoSize.width
+        cell.photoHeight.constant = style.photoSize.height
+        cell.titleTopMargin.constant = style.titleTopMargin
+        cell.subtitleTopMargin.constant = style.subtitleTopMargin
+        
+        cell.contactTextLabel.font = style.titleFont
+        cell.contactTextLabel.textColor = style.titleColor
+        cell.contactDetailTextLabel.font = style.subtitleFont
+        cell.contactDetailTextLabel.textColor = style.subtitleColor
+        
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+        
     }
     
     
@@ -288,6 +392,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     override open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! EPContactCell
         cell.accessoryType = UITableViewCellAccessoryType.none
+        
+        if let style = style {
+            setupCell(cell: cell, style: style)
+        }
+        
         //Convert CNContact to EPContact
 		let contact: EPContact
         
@@ -312,7 +421,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             cell.selectionStyle = .none
         }
 		
-        cell.updateContactsinUI(contact, indexPath: indexPath, subtitleType: subtitleCellValue)
+        cell.updateContactsinUI(contact, indexPath: indexPath, subtitleType: subtitleCellValue, style: style)
         return cell
     }
     
@@ -364,7 +473,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     }
     
     override open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60.0
+        if let style = style {
+            return style.rowHeight
+        } else {
+            return 60.0
+        }
     }
     
     override open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
@@ -373,14 +486,62 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         return sortedContactKeys.index(of: title)!
     }
     
-    override  open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        if resultSearchController.isActive { return nil }
-        return sortedContactKeys
+    override open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if let style = style {
+            cell.backgroundColor = style.cellBackgroundColor
+        }
     }
-
+    
+    override  open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        
+        if resultSearchController.isActive { return nil }
+        
+        if style?.showIndexBar ?? true {
+            return sortedContactKeys
+        } else {
+            return nil
+        }
+    }
+    
     override open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if resultSearchController.isActive { return nil }
         return sortedContactKeys[section]
+    }
+    
+    override open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        if let headerStyle = headerStyle,
+            let text = self.tableView(tableView, titleForHeaderInSection: section) {
+            
+            let view =
+                UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.height, height: headerStyle.height))
+            
+            view.backgroundColor = headerStyle.backgroundColor
+            view.autoresizingMask = [.flexibleWidth]
+            
+            let label = UILabel(frame: CGRect(x: headerStyle.leftMargin, y: 0, width: tableView.frame.size.height, height: headerStyle.height))
+            label.autoresizingMask = [.flexibleWidth]
+            view.addSubview(label)
+            
+            label.text = text
+            label.textColor = headerStyle.textColor
+            
+            return view
+            
+        } else {
+            return nil
+        }
+    }
+    
+    override open func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
+        if let headerStyle = headerStyle,
+            let _ = self.tableView(tableView, titleForHeaderInSection: section) {
+            return headerStyle.height
+        } else {
+            return super.tableView(tableView, heightForHeaderInSection: section)
+        }
     }
     
     // MARK: - Button Actions
