@@ -55,12 +55,32 @@ public struct EPContactPickerStyle {
     public var initialFont = UIFont.systemFont(ofSize: 17)
     public var initialColor = UIColor.white
     public var initialBackgroundColors: [UIColor]?
-    
+
+    public var showPicuture = true
+    public var showSubtitle = true
     public var showIndexBar = true
     public var showSearchBar = true
     
+    
     public init() {
     }
+    
+    var computedPhotoSize: CGSize {
+        if showPicuture {
+            return photoSize
+        } else {
+            return CGSize(width: 0, height: photoSize.height)
+        }
+    }
+    
+    var computedPhotoRightMargin: CGFloat {
+        if showPicuture {
+            return photoRightMargin
+        } else {
+            return 0
+        }
+    }
+    
     
 }
 
@@ -237,11 +257,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     func setupCell(cell:EPContactCell, style:EPContactPickerStyle) {
         
         cell.photoLeftMargin.constant = style.photoLeftMargin
-        cell.photoRightMargin.constant = style.photoRightMargin
-        cell.photoWidth.constant = style.photoSize.width
-        cell.photoHeight.constant = style.photoSize.height
+        cell.photoRightMargin.constant = style.computedPhotoRightMargin
+        cell.photoWidth.constant = style.computedPhotoSize.width
+        cell.photoHeight.constant = style.computedPhotoSize.height
         cell.titleTopMargin.constant = style.titleTopMargin
         cell.subtitleTopMargin.constant = style.subtitleTopMargin
+        cell.contactDetailTextLabel.isHidden = !style.showSubtitle
         
         cell.contactTextLabel.font = style.titleFont
         cell.contactTextLabel.textColor = style.titleColor
