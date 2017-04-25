@@ -320,11 +320,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                         let firstLetter: String? = {
                             switch sortOrder {
                             case .familyName:
-                                return contact.familyName[0..<1]
+                                return contact.familyName[0..<1] ?? contact.givenName[0..<1] ?? contact.organizationName[0..<1]
                             case .givenName:
-                                return contact.givenName[0..<1]
+                                return contact.givenName[0..<1] ?? contact.familyName[0..<1] ?? contact.organizationName[0..<1]
                             default:
-                                return contact.givenName[0..<1]
+                                return contact.givenName[0..<1] ?? contact.familyName[0..<1] ?? contact.organizationName[0..<1]
                             }
                         }()
                         
