@@ -15,6 +15,7 @@ public protocol EPPickerDelegate {
     func epContactPicker(_: EPContactsPicker, didCancel error: NSError)
     func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact)
 	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact])
+    func epContactPickerSearchDidEnd(_: EPContactsPicker)
 }
 
 public extension EPPickerDelegate {
@@ -22,6 +23,7 @@ public extension EPPickerDelegate {
 	func epContactPicker(_: EPContactsPicker, didCancel error: NSError) { }
 	func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) { }
 	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) { }
+    func epContactPickerSearchDidEnd(_: EPContactsPicker) { }
 }
 
 typealias ContactsHandler = (_ contacts : [CNContact] , _ error : NSError?) -> Void
@@ -61,7 +63,6 @@ public struct EPContactPickerStyle {
     public var showIndexBar = true
     public var showSearchBar = true
     
-    
     public init() {
     }
     
@@ -88,7 +89,7 @@ public struct EPContactPickerHeaderStyle {
     
     public var font = UIFont.systemFont(ofSize: 15)
     public var height = CGFloat(25)
-    public var backgroundColor = UIColor.lightGray
+    public var backgroundColor = UIColor.black.withAlphaComponent(0.1)
     public var textColor = UIColor.black
     public var leftMargin = CGFloat(10)
     
@@ -112,6 +113,24 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     var subtitleCellValue = SubtitleCellValue.phoneNumber
     var multiSelectEnabled: Bool = false //Default is single selection contact
     
+    public var searchBar: UISearchBar {
+        return resultSearchController.searchBar
+    }
+    
+    var noResultLabel: UILabel!
+    var showsNoResults = false {
+        didSet {
+            if showsNoResults {
+                noResultLabel.frame = view.bounds
+                view.addSubview(noResultLabel)
+                tableView.isScrollEnabled = false
+            } else {
+                noResultLabel.removeFromSuperview()
+                tableView.isScrollEnabled = true
+            }
+        }
+    }
+    
     public var style: EPContactPickerStyle? {
         didSet {
             if isViewLoaded {
@@ -123,7 +142,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    public var headerStyle: EPContactPickerHeaderStyle? {
+    public var headerStyle: EPContactPickerHeaderStyle? = EPContactPickerHeaderStyle() {
         didSet {
             if isViewLoaded {
                 tableView.reloadData()
@@ -170,9 +189,17 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     func initializeSearchBar() {
         
-        guard style?.showSearchBar ?? true else {
-            return
-        }
+        self.noResultLabel = {
+            
+            let label = UILabel(frame: view.bounds)
+            label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            label.backgroundColor = UIColor(white:0.9, alpha:1.0)
+            label.textColor = UIColor.gray
+            label.textAlignment = .center
+            label.isUserInteractionEnabled = true
+            label.text = "No Results"
+            return label
+        }()
         
         self.resultSearchController = ( {
             let controller = UISearchController(searchResultsController: nil)
@@ -180,7 +207,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             controller.dimsBackgroundDuringPresentation = false
             controller.searchBar.sizeToFit()
             controller.searchBar.delegate = self
-            self.tableView.tableHeaderView = controller.searchBar
+            
+            if style?.showSearchBar ?? true {
+                self.tableView.tableHeaderView = controller.searchBar
+            } else {
+                controller.hidesNavigationBarDuringPresentation = false
+            }
             return controller
         })()
     }
@@ -469,7 +501,13 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             var delay = 0.0
             if resultSearchController.isActive {
                 resultSearchController.isActive = false
-                delay = 0.7
+                tableView.reloadData()
+                contactDelegate?.epContactPickerSearchDidEnd(self)
+                showsNoResults = false
+                
+                if (style?.showSearchBar ?? true) {
+                    delay = 0.7
+                }
             }
             
             
@@ -551,7 +589,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             return view
             
         } else {
-            return nil
+            return super.tableView(tableView, viewForHeaderInSection: section)
         }
     }
     
@@ -596,7 +634,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                     keysToFetch: allowedContactKeys())
                 //print("\(filteredContacts.count) count")
                 
-                self.tableView.reloadData()
+                showsNoResults = filteredContacts.count == 0
+                tableView.reloadData()
                 
             }
             catch {
@@ -609,7 +648,15 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
+            self.contactDelegate?.epContactPickerSearchDidEnd(self)
+            self.showsNoResults = false
         })
+    }
+    
+    open func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        
+//        self.contactDelegate?.epContactPickerSearchDidEnd(self)
+        
     }
     
 }
