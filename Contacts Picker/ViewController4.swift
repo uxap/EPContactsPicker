@@ -10,11 +10,21 @@ import Foundation
 import UIKit
 import UXContactsPicker
 
-class ViewController2 : UIViewController {
+class ViewController4 : UIViewController {
+    
+    @IBOutlet var searchButtonItem: UIBarButtonItem!
     
     lazy var contactsPicker: EPContactsPicker = {
-        return EPContactsPicker(delegate: self, multiSelection: false)
+        let picker = EPContactsPicker(delegate: self, multiSelection: false)
+        
+        var style = EPContactPickerStyle()
+        style.showSearchBar = false
+        picker.style = style
+        
+        return picker
     }()
+    
+    var isSearching = false
 
     override func viewDidLoad() {
         
@@ -34,9 +44,73 @@ class ViewController2 : UIViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if (isSearching) {
+            contactsPicker.searchBar.becomeFirstResponder()
+        }
+    }
+    
 }
 
-extension ViewController2: EPPickerDelegate {
+// MARK: - Action
+extension ViewController4 {
+    
+    @IBAction func didTapSearchButton() {
+        
+        beginSearch(animated: true)
+    }
+    
+}
+
+// MARK: - Search
+extension ViewController4 {
+    
+    func beginSearch(animated:Bool) {
+
+        let searchBar = contactsPicker.searchBar
+        self.navigationItem.setRightBarButton(nil, animated: animated)
+        self.navigationItem.titleView = searchBar
+        self.navigationItem.setHidesBackButton(true, animated: animated)
+        
+        searchBar.becomeFirstResponder()
+        isSearching = true
+        
+        if animated {
+            searchBar.alpha = 0
+            UIView.animate(withDuration: 0.3, animations: { 
+                searchBar.alpha = 1.0
+            })
+        }
+        
+    }
+    
+    func endSearch(animated:Bool) {
+        
+        let searchBar = contactsPicker.searchBar
+        
+        let completion: (Bool)->Void = { Bool -> Void in
+            
+            self.navigationItem.setRightBarButton(self.searchButtonItem, animated: animated)
+            self.navigationItem.titleView = nil
+            self.navigationItem.setHidesBackButton(false, animated: animated)
+            self.isSearching = false
+            
+        }
+        
+        if animated {
+            UIView.animate(withDuration: 0.3, animations: {
+                searchBar.alpha = 0.0
+            }, completion: completion )
+        } else {
+            completion(true)
+        }
+
+    }
+}
+
+extension ViewController4: EPPickerDelegate {
     
     func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError) {
         
@@ -47,17 +121,27 @@ extension ViewController2: EPPickerDelegate {
     }
     func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) {
         print(contact.phoneNumbers)
+
+        if (isSearching) {
+            endSearch(animated: true)
+        }
         
         if contact.phoneNumbers.count > 0 {
             let alert = UIAlertController(title: "Selected Contact", message: contact.phoneNumbers[0].phoneNumber, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
+            
         }
         
     }
     
     func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) {
         
+    }
+    
+    func epContactPickerSearchDidEnd(_: EPContactsPicker) {
+        
+        endSearch(animated: true)
     }
     
     
