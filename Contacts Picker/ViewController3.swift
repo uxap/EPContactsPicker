@@ -12,9 +12,9 @@ import UXContactsPicker
 
 class ViewController3 : UIViewController {
     
-    lazy var style: EPContactPickerStyle = {
+    lazy var style: EPContactsPickerStyle = {
         
-        var style = EPContactPickerStyle()
+        var style = EPContactsPickerStyle()
         
         style.rowHeight = 75
         style.photoLeftMargin = 16
@@ -49,9 +49,9 @@ class ViewController3 : UIViewController {
         return style
     }()
     
-    lazy var headerStyle: EPContactPickerHeaderStyle = {
+    lazy var headerStyle: EPContactsPickerHeaderStyle = {
         
-        var style = EPContactPickerHeaderStyle()
+        var style = EPContactsPickerHeaderStyle()
         style.backgroundColor = UIColor(colorLiteralRed: 25.0/255.0, green: 26.0/255.0, blue: 37.0/255.0, alpha: 1.0)
         style.textColor = UIColor.white
         style.leftMargin = 16

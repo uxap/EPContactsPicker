@@ -13,13 +13,25 @@ import UXContactsPicker
 class ViewController4 : UIViewController {
     
     @IBOutlet var searchButtonItem: UIBarButtonItem!
+    lazy var cancelButtonItem: UIBarButtonItem = {
+        let button = UIButton(type: .system)
+        button.frame = CGRect(x: 0, y: 0, width: 60, height: 32)
+        button .setTitle("Cancel", for: .normal)
+        button.addTarget(self, action: #selector(didTapCancelSearchButton),
+                         for: .touchUpInside)
+        return UIBarButtonItem(customView: button)
+    }()
     
     lazy var contactsPicker: EPContactsPicker = {
         let picker = EPContactsPicker(delegate: self, multiSelection: false)
         
-        var style = EPContactPickerStyle()
+        var style = EPContactsPickerStyle()
         style.showSearchBar = false
         picker.style = style
+        
+        var searchBarStyle = EPContactsPickerSearchBarStyle()
+        searchBarStyle.hasCancelButton = false
+        picker.searchBarStyle = searchBarStyle
         
         return picker
     }()
@@ -62,6 +74,12 @@ extension ViewController4 {
         beginSearch(animated: true)
     }
     
+    func didTapCancelSearchButton() {
+        
+        contactsPicker.cancelSearch()
+        
+    }
+    
 }
 
 // MARK: - Search
@@ -70,7 +88,7 @@ extension ViewController4 {
     func beginSearch(animated:Bool) {
 
         let searchBar = contactsPicker.searchBar
-        self.navigationItem.setRightBarButton(nil, animated: animated)
+        self.navigationItem.setRightBarButton(cancelButtonItem, animated: animated)
         self.navigationItem.titleView = searchBar
         self.navigationItem.setHidesBackButton(true, animated: animated)
         

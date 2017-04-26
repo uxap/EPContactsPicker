@@ -35,7 +35,7 @@ public enum SubtitleCellValue{
     case organization
 }
 
-public struct EPContactPickerStyle {
+public struct EPContactsPickerStyle {
     
     public var rowHeight = CGFloat(60.0)
     public var photoLeftMargin = CGFloat(10.0)
@@ -85,7 +85,7 @@ public struct EPContactPickerStyle {
     
 }
 
-public struct EPContactPickerHeaderStyle {
+public struct EPContactsPickerHeaderStyle {
     
     public var font = UIFont.systemFont(ofSize: 15)
     public var height = CGFloat(25)
@@ -97,13 +97,52 @@ public struct EPContactPickerHeaderStyle {
     
 }
 
+public struct EPContactsPickerSearchBarStyle {
+    
+    public var hasCancelButton = true
+    public var searchButtonContentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    public var searchButtonImage: UIImage?
+    public var dialButtonContentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    public var dialButtonImage: UIImage?
+    public var noResultsViewBackgroundColor: UIColor?
+    public var noResultsViewFont: UIFont?
+    public var noResultsViewTextColor: UIColor?
+    
+    public init(){}
+}
+
+
+
 open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
+    
+    class CustomSearchBar: UISearchBar {
+        
+        override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
+            super.setShowsCancelButton(false, animated:false)
+        }
+    }
+    
+    class CustomSearchController: UISearchController {
+        
+        lazy var _searchBar: CustomSearchBar = {
+            //[unowned self] in
+            let customSearchBar = CustomSearchBar(frame: CGRect.zero)
+            return customSearchBar
+        }()
+        
+        override var searchBar: UISearchBar {
+            get {
+                return _searchBar
+            }
+        }
+    }
+    
     
     // MARK: - Properties
     
     open var contactDelegate: EPPickerDelegate?
     var contactsStore: CNContactStore?
-    var resultSearchController = UISearchController()
+    var resultSearchController: UISearchController!
     var orderedContacts = [String: [CNContact]]() //Contacts ordered in dicitonary alphabetically
     var sortedContactKeys = [String]()
     
@@ -131,7 +170,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    public var style: EPContactPickerStyle? {
+    public var style: EPContactsPickerStyle? {
         didSet {
             if isViewLoaded {
                 if let style = style {
@@ -142,11 +181,17 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    public var headerStyle: EPContactPickerHeaderStyle? = EPContactPickerHeaderStyle() {
+    public var headerStyle: EPContactsPickerHeaderStyle? = EPContactsPickerHeaderStyle() {
         didSet {
             if isViewLoaded {
                 tableView.reloadData()
             }
+        }
+    }
+    
+    public var searchBarStyle: EPContactsPickerSearchBarStyle? {
+        didSet {
+            initializeSearchBar()
         }
     }
     
@@ -190,11 +235,16 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     func initializeSearchBar() {
         
         self.noResultLabel = {
+            [unowned self] in
             
-            let label = UILabel(frame: view.bounds)
+            let label = UILabel(frame: self.view.bounds)
             label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            label.backgroundColor = UIColor(white:0.9, alpha:1.0)
-            label.textColor = UIColor.gray
+            label.backgroundColor =
+                self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+            label.textColor =
+                self.searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
+            
+            label.font = self.searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
             label.textAlignment = .center
             label.isUserInteractionEnabled = true
             label.text = "No Results"
@@ -202,13 +252,24 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }()
         
         self.resultSearchController = ( {
-            let controller = UISearchController(searchResultsController: nil)
+            [unowned self] in
+            
+            let controller:UISearchController = {
+                
+                if self.searchBarStyle?.hasCancelButton ?? true {
+                    return UISearchController(searchResultsController: nil)
+                } else {
+                    return CustomSearchController(searchResultsController: nil)
+                }
+               
+            }()
+            
             controller.searchResultsUpdater = self
             controller.dimsBackgroundDuringPresentation = false
             controller.searchBar.sizeToFit()
             controller.searchBar.delegate = self
             
-            if style?.showSearchBar ?? true {
+            if self.style?.showSearchBar ?? true {
                 self.tableView.tableHeaderView = controller.searchBar
             } else {
                 controller.hidesNavigationBarDuringPresentation = false
@@ -275,7 +336,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     // MARK: - Style
     
-    func setupTable(style:EPContactPickerStyle) {
+    func setupTable(style:EPContactsPickerStyle) {
         tableView.backgroundColor = style.backgroundColor
         tableView.separatorColor = style.seperatorColor
         
@@ -286,7 +347,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    func setupCell(cell:EPContactCell, style:EPContactPickerStyle) {
+    func setupCell(cell:EPContactCell, style:EPContactsPickerStyle) {
         
         cell.photoLeftMargin.constant = style.photoLeftMargin
         cell.photoRightMargin.constant = style.computedPhotoRightMargin
@@ -500,10 +561,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             
             var delay = 0.0
             if resultSearchController.isActive {
-                resultSearchController.isActive = false
-                tableView.reloadData()
-                contactDelegate?.epContactPickerSearchDidEnd(self)
-                showsNoResults = false
+                cancelSearch()
                 
                 if (style?.showSearchBar ?? true) {
                     delay = 0.7
@@ -659,4 +717,21 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
     }
     
+}
+
+// MARK: public method
+extension EPContactsPicker {
+    
+    public func cancelSearch() {
+        
+        guard resultSearchController.isActive else {
+            return
+        }
+        
+        resultSearchController.isActive = false
+        tableView.reloadData()
+        contactDelegate?.epContactPickerSearchDidEnd(self)
+        showsNoResults = false
+        
+    }
 }

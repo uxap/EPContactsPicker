@@ -44,7 +44,7 @@ class EPContactCell: UITableViewCell {
         contactContainerView.layer.cornerRadius = contactContainerView.frame.size.width/2        
     }
     
-    func updateInitialsColorForIndexPath(_ indexpath: IndexPath, style:EPContactPickerStyle? = nil) {
+    func updateInitialsColorForIndexPath(_ indexpath: IndexPath, style:EPContactsPickerStyle? = nil) {
         //Applies color to Initial Label
         let colorArray = style?.initialBackgroundColors ?? [EPGlobalConstants.Colors.amethystColor,EPGlobalConstants.Colors.asbestosColor,EPGlobalConstants.Colors.emeraldColor,EPGlobalConstants.Colors.peterRiverColor,EPGlobalConstants.Colors.pomegranateColor,EPGlobalConstants.Colors.pumpkinColor,EPGlobalConstants.Colors.sunflowerColor]
         let randomValue = (indexpath.row + indexpath.section) % colorArray.count
@@ -59,7 +59,7 @@ class EPContactCell: UITableViewCell {
         }
     }
  
-    func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactPickerStyle? = nil) {
+    func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactsPickerStyle? = nil) {
         self.contact = contact
         //Update all UI in the cell here
         self.contactTextLabel?.attributedText = contact.attributedFullName
