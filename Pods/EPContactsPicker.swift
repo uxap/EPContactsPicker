@@ -100,13 +100,10 @@ public struct EPContactsPickerHeaderStyle {
 public struct EPContactsPickerSearchBarStyle {
     
     public var hasCancelButton = true
-    public var searchButtonContentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    public var searchButtonImage: UIImage?
-    public var dialButtonContentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    public var dialButtonImage: UIImage?
     public var noResultsViewBackgroundColor: UIColor?
     public var noResultsViewFont: UIFont?
     public var noResultsViewTextColor: UIColor?
+    public var keyboardAppearance = UIKeyboardAppearance.default
     
     public init(){}
 }
@@ -268,6 +265,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             controller.dimsBackgroundDuringPresentation = false
             controller.searchBar.sizeToFit()
             controller.searchBar.delegate = self
+            controller.searchBar.keyboardAppearance =
+                self.searchBarStyle?.keyboardAppearance ?? .default
             
             if self.style?.showSearchBar ?? true {
                 self.tableView.tableHeaderView = controller.searchBar
