@@ -139,12 +139,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     open var contactDelegate: EPPickerDelegate?
     var contactsStore: CNContactStore?
-    var resultSearchController: UISearchController!
-    var orderedContacts = [String: [CNContact]]() //Contacts ordered in dicitonary alphabetically
+    var resultSearchController = UISearchController()
+    var orderedContacts = [String: [EPContact]]() //Contacts ordered in dicitonary alphabetically
     var sortedContactKeys = [String]()
     
     var selectedContacts = [EPContact]()
-    var filteredContacts = [CNContact]()
+    var filteredContacts = [EPContact]()
     
     var subtitleCellValue = SubtitleCellValue.phoneNumber
     var multiSelectEnabled: Bool = false //Default is single selection contact
@@ -231,7 +231,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     func initializeSearchBar() {
         
-        self.noResultLabel = {
+        noResultLabel = {
             [unowned self] in
             
             let label = UILabel(frame: self.view.bounds)
@@ -248,7 +248,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             return label
         }()
         
-        self.resultSearchController = ( {
+        resultSearchController = {
             [unowned self] in
             
             let controller:UISearchController = {
@@ -274,7 +274,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 controller.hidesNavigationBarDuringPresentation = false
             }
             return controller
-        })()
+        } ()
     }
     
     func inititlizeBarButtons() {
@@ -444,12 +444,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                         if let firstLetter = firstLetter , firstLetter.containsAlphabets() {
                             key = firstLetter.uppercased()
                         }
-                        var contacts = [CNContact]()
+                        var contacts = [EPContact]()
                         
                         if let segregatedContact = self.orderedContacts[key] {
                             contacts = segregatedContact
                         }
-                        contacts.append(contact)
+                        contacts.append(EPContact(contact: contact))
                         self.orderedContacts[key] = contacts
 
                     })
@@ -514,14 +514,14 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
 		let contact: EPContact
         
         if resultSearchController.isActive {
-            contact = EPContact(contact: filteredContacts[(indexPath as NSIndexPath).row])
+            contact = filteredContacts[(indexPath as NSIndexPath).row]
         } else {
 			guard let contactsForSection = orderedContacts[sortedContactKeys[(indexPath as NSIndexPath).section]] else {
 				assertionFailure()
 				return UITableViewCell()
 			}
 
-			contact = EPContact(contact: contactsForSection[(indexPath as NSIndexPath).row])
+			contact = contactsForSection[(indexPath as NSIndexPath).row]
         }
 		
         if multiSelectEnabled  && selectedContacts.contains(where: { $0.contactId == contact.contactId }) {
@@ -689,6 +689,9 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             do {
                 filteredContacts = try store.unifiedContacts(matching: predicate,
                     keysToFetch: allowedContactKeys())
+                .map { contact -> EPContact in
+                    return EPContact(contact: contact)
+                }
                 //print("\(filteredContacts.count) count")
                 
                 showsNoResults = filteredContacts.count == 0
