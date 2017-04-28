@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Contacts
-
 
 public protocol EPPickerDelegate {
 	func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError)
@@ -26,8 +24,6 @@ public extension EPPickerDelegate {
     func epContactPickerSearchDidEnd(_: EPContactsPicker) { }
 }
 
-typealias ContactsHandler = (_ contacts : [CNContact] , _ error : NSError?) -> Void
-
 public enum SubtitleCellValue{
     case phoneNumber
     case email
@@ -35,82 +31,9 @@ public enum SubtitleCellValue{
     case organization
 }
 
-public struct EPContactsPickerStyle {
-    
-    public var rowHeight = CGFloat(60.0)
-    public var photoLeftMargin = CGFloat(10.0)
-    public var photoRightMargin = CGFloat(10.0)
-    public var photoSize = CGSize(width: 40.0, height: 40.0)
-    
-    public var titleFont = UIFont.systemFont(ofSize: 17.0)
-    public var titleColor = UIColor(colorLiteralRed: 85.0/255.0, green: 85.0/255.0, blue: 85.0/255.0, alpha: 1.0)
-    public var titleTopMargin = CGFloat(10.0)
-
-    public var subtitleFont = UIFont.systemFont(ofSize: 15.0)
-    public var subtitleColor = UIColor(colorLiteralRed: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0)
-    public var subtitleTopMargin = CGFloat(4)
-    
-    public var cellBackgroundColor = UIColor.white
-    public var backgroundColor = UIColor.white
-    public var seperatorColor: UIColor?
-    
-    public var initialFont = UIFont.systemFont(ofSize: 17)
-    public var initialColor = UIColor.white
-    public var initialBackgroundColors: [UIColor]?
-
-    public var showPicuture = true
-    public var showSubtitle = true
-    public var showIndexBar = true
-    public var showSearchBar = true
-    
-    public init() {
-    }
-    
-    var computedPhotoSize: CGSize {
-        if showPicuture {
-            return photoSize
-        } else {
-            return CGSize(width: 0, height: photoSize.height)
-        }
-    }
-    
-    var computedPhotoRightMargin: CGFloat {
-        if showPicuture {
-            return photoRightMargin
-        } else {
-            return 0
-        }
-    }
-    
-    
-}
-
-public struct EPContactsPickerHeaderStyle {
-    
-    public var font = UIFont.systemFont(ofSize: 15)
-    public var height = CGFloat(25)
-    public var backgroundColor = UIColor.black.withAlphaComponent(0.1)
-    public var textColor = UIColor.black
-    public var leftMargin = CGFloat(10)
-    
-    public init() {}
-    
-}
-
-public struct EPContactsPickerSearchBarStyle {
-    
-    public var hasCancelButton = true
-    public var noResultsViewBackgroundColor: UIColor?
-    public var noResultsViewFont: UIFont?
-    public var noResultsViewTextColor: UIColor?
-    public var keyboardAppearance = UIKeyboardAppearance.default
-    
-    public init(){}
-}
-
-
-
 open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
+    
+    public struct DataSource: EPContactsDataSource {}
     
     class CustomSearchBar: UISearchBar {
         
@@ -138,7 +61,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     // MARK: - Properties
     
     open var contactDelegate: EPPickerDelegate?
-    var contactsStore: CNContactStore?
+    public var dataSource = DataSource()
     var resultSearchController = UISearchController()
     var orderedContacts = [String: [EPContact]]() //Contacts ordered in dicitonary alphabetically
     var sortedContactKeys = [String]()
@@ -165,6 +88,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 tableView.isScrollEnabled = true
             }
         }
+    }
+    var showSearchResults: Bool {
+        return
+            resultSearchController.isActive &&
+            filteredContacts.count >= 0 &&
+            resultSearchController.searchBar.text?.characters.count ?? 0 > 0
     }
     
     public var style: EPContactsPickerStyle? {
@@ -212,8 +141,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        tableView.reloadData()
-        
+        //tableView.reloadData()
         if tableView.numberOfSections > 0 && tableView.numberOfRows(inSection: 0) > 0 {
             
             let scrollTo = IndexPath(row: 0, section: 0)
@@ -370,130 +298,70 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     // MARK: - Contact Operations
   
       open func reloadContacts() {
-        getContacts( {(contacts, error) in
-            if (error == nil) {
-                DispatchQueue.main.async(execute: {
-                    self.tableView.reloadData()
-                })
+        
+        tableView.beginUpdates()
+        
+        
+        dataSource.loadContacts(self, completion: { error in
+
+            self.tableView.endUpdates()
+            
+        }) { [weak self] contact in
+            
+            guard let weakSelf = self else {
+                return
             }
-        })
+            
+            let key = contact.sectionKey
+            
+            if let section = weakSelf.sortedContactKeys.index(of: key) {
+            
+                let row = weakSelf.orderedContacts[key]!.count
+                weakSelf.orderedContacts[key]?.append(contact)
+                
+                weakSelf.tableView.insertRows(at: [IndexPath(row: row, section: section)], with: .fade)
+                //print("  (\(section),\(row))")
+
+                
+            } else {
+                
+                weakSelf.orderedContacts[key] = [contact]
+                weakSelf.sortedContactKeys.append(key)
+
+                /*
+                weakSelf.sortedContactKeys.sort(by: { lhs, rhs -> Bool in
+                    
+                    if lhs == "#" {
+                        return false
+                    }
+                    if rhs == "#" {
+                        return true
+                    }
+                    return lhs < rhs
+                    
+                })
+                */
+                
+                let section = weakSelf.sortedContactKeys.index(of: key)!
+                weakSelf.tableView.insertSections(IndexSet(integer: section), with: .fade)
+                //print("(\(section),\(key))")
+                
+            }
+            
+        }
+        
       }
   
-    func getContacts(_ completion:  @escaping ContactsHandler) {
-        if contactsStore == nil {
-            //ContactStore is control for accessing the Contacts
-            contactsStore = CNContactStore()
-        }
-        let error = NSError(domain: "EPContactPickerErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "No Contacts Access"])
-        
-        switch CNContactStore.authorizationStatus(for: CNEntityType.contacts) {
-            case CNAuthorizationStatus.denied, CNAuthorizationStatus.restricted:
-                //User has denied the current app to access the contacts.
-                
-                let productName = Bundle.main.infoDictionary!["CFBundleName"]!
-                
-                let alert = UIAlertController(title: "Unable to access contacts", message: "\(productName) does not have access to contacts. Kindly enable it in privacy settings ", preferredStyle: UIAlertControllerStyle.alert)
-                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {  action in
-                    self.contactDelegate?.epContactPicker(self, didContactFetchFailed: error)
-                    completion([], error)
-                    self.dismiss(animated: true, completion: nil)
-                })
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
-            
-            case CNAuthorizationStatus.notDetermined:
-                //This case means the user is prompted for the first time for allowing contacts
-                contactsStore?.requestAccess(for: CNEntityType.contacts, completionHandler: { (granted, error) -> Void in
-                    //At this point an alert is provided to the user to provide access to contacts. This will get invoked if a user responds to the alert
-                    if  (!granted ){
-                        DispatchQueue.main.async(execute: { () -> Void in
-                            completion([], error! as NSError?)
-                        })
-                    }
-                    else{
-                        self.getContacts(completion)
-                    }
-                })
-            
-            case  CNAuthorizationStatus.authorized:
-                //Authorization granted by user for this app.
-                var contactsArray = [CNContact]()
-                
-                let contactFetchRequest = CNContactFetchRequest(keysToFetch: allowedContactKeys())
-                let sortOrder = CNContactsUserDefaults.shared().sortOrder
-                contactFetchRequest.sortOrder = sortOrder
-                
-                do {
-                    try contactsStore?.enumerateContacts(with: contactFetchRequest, usingBlock: { (contact, stop) -> Void in
-                        //Ordering contacts based on alphabets in firstname
-                        contactsArray.append(contact)
-                        var key: String = "#"
-                        //If ordering has to be happening via family name change it here.
-
-                        let firstLetter: String? = {
-                            switch sortOrder {
-                            case .familyName:
-                                return contact.familyName[0..<1] ?? contact.givenName[0..<1] ?? contact.organizationName[0..<1]
-                            case .givenName:
-                                return contact.givenName[0..<1] ?? contact.familyName[0..<1] ?? contact.organizationName[0..<1]
-                            default:
-                                return contact.givenName[0..<1] ?? contact.familyName[0..<1] ?? contact.organizationName[0..<1]
-                            }
-                        }()
-                        
-                        if let firstLetter = firstLetter , firstLetter.containsAlphabets() {
-                            key = firstLetter.uppercased()
-                        }
-                        var contacts = [EPContact]()
-                        
-                        if let segregatedContact = self.orderedContacts[key] {
-                            contacts = segregatedContact
-                        }
-                        contacts.append(EPContact(contact: contact))
-                        self.orderedContacts[key] = contacts
-
-                    })
-                    self.sortedContactKeys = Array(self.orderedContacts.keys).sorted(by: <)
-                    if self.sortedContactKeys.first == "#" {
-                        self.sortedContactKeys.removeFirst()
-                        self.sortedContactKeys.append("#")
-                    }
-                    completion(contactsArray, nil)
-                }
-                //Catching exception as enumerateContactsWithFetchRequest can throw errors
-                catch let error as NSError {
-                    print(error.localizedDescription)
-                }
-            
-        }
-    }
-    
-    func allowedContactKeys() -> [CNKeyDescriptor]{
-        //We have to provide only the keys which we have to access. We should avoid unnecessary keys when fetching the contact. Reducing the keys means faster the access.
-        return [CNContactNamePrefixKey as CNKeyDescriptor,
-            CNContactGivenNameKey as CNKeyDescriptor,
-            CNContactFamilyNameKey as CNKeyDescriptor,
-            CNContactOrganizationNameKey as CNKeyDescriptor,
-            CNContactBirthdayKey as CNKeyDescriptor,
-            CNContactImageDataKey as CNKeyDescriptor,
-            CNContactThumbnailImageDataKey as CNKeyDescriptor,
-            CNContactImageDataAvailableKey as CNKeyDescriptor,
-            CNContactPhoneNumbersKey as CNKeyDescriptor,
-            CNContactEmailAddressesKey as CNKeyDescriptor,
-            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-            CNContactFormatter.descriptorForRequiredKeys(for: .phoneticFullName)
-        ]
-    }
     
     // MARK: - Table View DataSource
     
     override open func numberOfSections(in tableView: UITableView) -> Int {
-        if resultSearchController.isActive { return 1 }
+        if showSearchResults { return 1 }
         return sortedContactKeys.count
     }
     
     override open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if resultSearchController.isActive { return filteredContacts.count }
+        if showSearchResults { return filteredContacts.count }
         if let contactsForSection = orderedContacts[sortedContactKeys[section]] {
             return contactsForSection.count
         }
@@ -513,7 +381,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         //Convert CNContact to EPContact
 		let contact: EPContact
         
-        if resultSearchController.isActive {
+        if showSearchResults {
             contact = filteredContacts[(indexPath as NSIndexPath).row]
         } else {
 			guard let contactsForSection = orderedContacts[sortedContactKeys[(indexPath as NSIndexPath).section]] else {
@@ -597,7 +465,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     }
     
     override open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        if resultSearchController.isActive { return 0 }
+        if showSearchResults { return 0 }
         tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: UITableViewScrollPosition.top , animated: false)        
         return sortedContactKeys.index(of: title)!
     }
@@ -611,7 +479,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     override  open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
-        if resultSearchController.isActive { return nil }
+        if showSearchResults { return nil }
         
         if style?.showIndexBar ?? true {
             return sortedContactKeys
@@ -621,7 +489,10 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     }
     
     override open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if resultSearchController.isActive { return nil }
+        if showSearchResults {
+            if showsNoResults { return nil }
+            else { return "Search Results" }
+        }
         return sortedContactKeys[section]
     }
     
@@ -678,29 +549,14 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     {
         if let searchText = resultSearchController.searchBar.text , searchController.isActive {
             
-            let predicate: NSPredicate
-            if searchText.characters.count > 0 {
-                predicate = CNContact.predicateForContacts(matchingName: searchText)
-            } else {
-                predicate = CNContact.predicateForContactsInContainer(withIdentifier: contactsStore!.defaultContainerIdentifier())
-            }
+            dataSource.searchContacts(searchText: searchText, completion: { result in
+                
+                self.filteredContacts = result
+                self.showsNoResults = self.filteredContacts.count == 0 && searchText.characters.count > 0
+                self.tableView.reloadData()
+                
+            })
             
-            let store = CNContactStore()
-            do {
-                filteredContacts = try store.unifiedContacts(matching: predicate,
-                    keysToFetch: allowedContactKeys())
-                .map { contact -> EPContact in
-                    return EPContact(contact: contact)
-                }
-                //print("\(filteredContacts.count) count")
-                
-                showsNoResults = filteredContacts.count == 0
-                tableView.reloadData()
-                
-            }
-            catch {
-                print("Error!")
-            }
         }
     }
     
@@ -711,12 +567,6 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             self.contactDelegate?.epContactPickerSearchDidEnd(self)
             self.showsNoResults = false
         })
-    }
-    
-    open func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        
-//        self.contactDelegate?.epContactPickerSearchDidEnd(self)
-        
     }
     
 }

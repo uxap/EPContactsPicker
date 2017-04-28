@@ -12,6 +12,7 @@ import Contacts
 public struct EPContact {
     
     let maxPhoneNumberCount = 5
+    public let sectionKey:String
     public var firstName: String
     public var lastName: String
     public var fullName: String?
@@ -27,6 +28,8 @@ public struct EPContact {
     public var emails = [(email: String, emailLabel: String )]()
 	
     public init (contact: CNContact) {
+        
+        sectionKey = contact.sectionKey
         firstName = contact.givenName
         lastName = contact.familyName
         company = contact.organizationName
@@ -74,6 +77,9 @@ public struct EPContact {
             CNContactFormatter.attributedString(
                 from: contact, style: .fullName, defaultAttributes: nil)
     }
+    
+    
+    
 	
     public func displayName() -> String {
         if let fullName = fullName {
@@ -118,6 +124,35 @@ public struct EPContact {
 		}
 		
         return initials
+    }
+    
+}
+
+fileprivate extension CNContact {
+    
+    var firstLetter: String? {
+        
+        let sortOrder = CNContactsUserDefaults.shared().sortOrder
+
+        switch sortOrder {
+        case .familyName:
+            return familyName[0..<1] ?? givenName[0..<1] ?? organizationName[0..<1]
+        case .givenName:
+            return givenName[0..<1] ?? familyName[0..<1] ?? organizationName[0..<1]
+        default:
+            return givenName[0..<1] ?? familyName[0..<1] ?? organizationName[0..<1]
+        }
+        
+    }
+    
+    var sectionKey: String {
+        
+        if let firstLetter = firstLetter , firstLetter.containsAlphabets() {
+            return firstLetter.uppercased()
+        } else {
+            return "#"
+        }
+        
     }
     
 }
