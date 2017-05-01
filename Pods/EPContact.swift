@@ -54,10 +54,17 @@ public struct EPContact {
         
         var i = 0
 		for phoneNumber in contact.phoneNumbers {
-			guard let phoneLabel = phoneNumber.label else { continue }
+            
+            var localizedLabel:String?
+            
+            if let label = phoneNumber.label {
+                localizedLabel = CNLabeledValue<NSString>.localizedString(forLabel: label)
+            }
+            
+			guard localizedLabel != nil else { continue }
 			let phone = phoneNumber.value.stringValue
 			
-			phoneNumbers.append((phone,phoneLabel))
+			phoneNumbers.append((phone,localizedLabel!))
             i = i+1
             if i > maxPhoneNumberCount {
                 break
