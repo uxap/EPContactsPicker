@@ -14,6 +14,7 @@ public protocol EPPickerDelegate {
     func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact)
 	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact])
     func epContactPickerSearchDidEnd(_: EPContactsPicker)
+    func epContactPickerShouldAutoDismiss(_: EPContactsPicker) -> Bool
 }
 
 public extension EPPickerDelegate {
@@ -22,6 +23,7 @@ public extension EPPickerDelegate {
 	func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) { }
 	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) { }
     func epContactPickerSearchDidEnd(_: EPContactsPicker) { }
+    func epContactPickerShouldAutoDismiss(_: EPContactsPicker) -> Bool { return true }
 }
 
 public enum SubtitleCellValue{
@@ -435,10 +437,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 }
             }
             
+            let autoDismiss = self.contactDelegate?.epContactPickerShouldAutoDismiss(self) ?? true
             
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 
-                if self.presentingViewController != nil {
+                if self.presentingViewController != nil && autoDismiss {
                     self.dismiss(animated: true, completion: {
                         DispatchQueue.main.async {
                             self.contactDelegate?.epContactPicker(self, didSelectContact: selectedContact)
