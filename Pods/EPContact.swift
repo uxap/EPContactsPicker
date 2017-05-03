@@ -11,7 +11,7 @@ import Contacts
 
 public struct EPContact {
     
-    let maxPhoneNumberCount = 5
+    static let maxPhoneNumberCount = 5
     public let sectionKey:String
     public var firstName: String
     public var lastName: String
@@ -66,7 +66,7 @@ public struct EPContact {
 			
 			phoneNumbers.append((phone,localizedLabel!))
             i = i+1
-            if i > maxPhoneNumberCount {
+            if i > EPContact.maxPhoneNumberCount {
                 break
             }
 		}
@@ -135,6 +135,129 @@ public struct EPContact {
     
 }
 
+public extension EPContact {
+    
+    public var dictionaryRepresentation: [String:Any?] {
+        
+        var dict = [String:Any]()
+        dict["sectionKey"] = sectionKey
+        dict["firstName"] = firstName
+        dict["lastName"] = lastName
+        dict["fullName"] = fullName
+        //dict["attributedFullName"] = ???
+        dict["nameOrder"] = nameOrder.rawValue
+        dict["company"] = company
+        dict["birthday"] = birthday
+        dict["birthdayString"] = birthdayString
+        dict["contactId"] = contactId
+        dict["phoneNumbers"] = phoneNumbers.map({ (phoneNumber, phoneLabel) -> [String:String] in
+            return ["phoneNumber":phoneNumber, "phoneLabel":phoneLabel]
+        })
+        dict["emails"] = emails.map({ (email, emailLabel) -> [String:String] in
+            return ["email":email, "emailLabel":emailLabel]
+        })
+        
+        return dict
+    }
+    
+}
+
+public extension EPContact {
+    
+    public init?(dict:[String:Any?]) {
+        
+        guard let sectionKey = dict["sectionKey"] as? String else {
+            return nil
+        }
+        self.sectionKey = sectionKey
+        
+        guard let firstName = dict["firstName"] as? String else {
+            return nil
+        }
+        self.firstName = firstName
+        
+        guard let lastName = dict["lastName"] as? String else {
+            return nil
+        }
+        self.lastName = lastName
+        
+        guard let fullName = dict["fullName"] as? String else {
+            return nil
+        }
+        self.fullName = fullName
+        
+        guard let nameOrderInt = dict["nameOrder"] as? Int else {
+            return nil
+        }
+        
+        guard let nameOrder = CNContactDisplayNameOrder(rawValue:nameOrderInt) else {
+            return nil
+        }
+        self.nameOrder = nameOrder
+        
+        guard let company = dict["company"] as? String else {
+            return nil
+        }
+        self.company = company
+        
+        guard let birthday = dict["birthday"] as? Date else {
+            return nil
+        }
+        self.birthday = birthday
+        
+        guard let birthdayString = dict["birthdayString"] as? String else {
+            return nil
+        }
+        self.birthdayString = birthdayString
+        
+        guard let contactId = dict["contactId"] as? String else {
+            return nil
+        }
+        self.contactId = contactId
+        
+        guard let phoneNumbersArray = dict["phoneNUmbers"] as? [[String:String]] else {
+            return nil
+        }
+        self.phoneNumbers = phoneNumbersArray.reduce([], {
+            
+            (result, dict) -> [(phoneNumber:String, phoneLabel:String)] in
+            
+            guard let phoneNumber = dict["phoneNumber"] else {
+                return result
+            }
+            
+            guard let phoneLabel = dict["phoneLabel"] else {
+                return result
+            }
+            
+            return result + [(phoneNumber, phoneLabel)]
+        })
+        
+        
+        guard let emailsArray = dict["emails"] as? [[String:String]] else {
+            return nil
+        }
+        self.emails = emailsArray.reduce([], {
+            
+            (result, dict) -> [(email:String, emailLabel:String)] in
+            
+            guard let email = dict["email"] else {
+                return result
+            }
+            
+            guard let emailLabel = dict["emailLabel"] else {
+                return result
+            }
+            
+            return result + [(email, emailLabel)]
+        })
+        
+    }
+    
+}
+
+
+
 fileprivate extension CNContact {
     
     var firstLetter: String? {
@@ -163,3 +286,6 @@ fileprivate extension CNContact {
     }
     
 }
+
+
+
