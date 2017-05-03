@@ -61,7 +61,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     // MARK: - Properties
     
     open var contactDelegate: EPPickerDelegate?
-    public var dataSource = DataSource()
+    public var dataSource:EPContactsDataSource = DataSource()
     var resultSearchController = UISearchController()
     var orderedContacts = [String: [EPContact]]() //Contacts ordered in dicitonary alphabetically
     var sortedContactKeys = [String]()
