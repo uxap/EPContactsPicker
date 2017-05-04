@@ -306,12 +306,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         orderedContacts = [:]
         sortedContactKeys = []
         
-        tableView.beginUpdates()
         
         
         dataSource.loadContacts(self, completion: { error in
 
-            self.tableView.endUpdates()
+            //self.tableView.endUpdates()
+            self.tableView.reloadData()
             
         }) { [weak self] contact in
             
@@ -321,19 +321,19 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             
             let key = contact.sectionKey
             
-            if let section = weakSelf.sortedContactKeys.index(of: key) {
+            if let _ /* section */ = weakSelf.sortedContactKeys.index(of: key) {
             
-                let row = weakSelf.orderedContacts[key]!.count
+                let _ /* row */ = weakSelf.orderedContacts[key]!.count
                 weakSelf.orderedContacts[key]?.append(contact)
-                weakSelf.tableView.insertRows(at: [IndexPath(row: row, section: section)], with: .fade)
+                //weakSelf.tableView.insertRows(at: [IndexPath(row: row, section: section)], with: .fade)
 
                 
             } else {
                 
                 weakSelf.orderedContacts[key] = [contact]
                 weakSelf.sortedContactKeys.append(key)
-                let section = weakSelf.sortedContactKeys.index(of: key)!
-                weakSelf.tableView.insertSections(IndexSet(integer: section), with: .fade)
+                let _ /* section */ = weakSelf.sortedContactKeys.index(of: key)!
+                //weakSelf.tableView.insertSections(IndexSet(integer: section), with: .fade)
                 //print("(\(section),\(key))")
                 
             }
