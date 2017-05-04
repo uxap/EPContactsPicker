@@ -29,6 +29,7 @@ public extension EPPickerDelegate {
 public enum SubtitleCellValue{
     case none
     case phoneNumber
+    case phoneLabel
     case email
     case birthday
     case organization
@@ -285,7 +286,6 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         cell.photoHeight.constant = style.computedPhotoSize.height
         cell.titleTopMargin.constant = style.titleTopMargin
         cell.subtitleTopMargin.constant = style.subtitleTopMargin
-        cell.contactDetailTextLabel.isHidden = !style.showSubtitle
         
         cell.contactTextLabel.font = style.titleFont
         cell.contactTextLabel.textColor = style.titleColor
@@ -323,30 +323,13 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             
                 let row = weakSelf.orderedContacts[key]!.count
                 weakSelf.orderedContacts[key]?.append(contact)
-                
                 weakSelf.tableView.insertRows(at: [IndexPath(row: row, section: section)], with: .fade)
-                //print("  (\(section),\(row))")
 
                 
             } else {
                 
                 weakSelf.orderedContacts[key] = [contact]
                 weakSelf.sortedContactKeys.append(key)
-
-                /*
-                weakSelf.sortedContactKeys.sort(by: { lhs, rhs -> Bool in
-                    
-                    if lhs == "#" {
-                        return false
-                    }
-                    if rhs == "#" {
-                        return true
-                    }
-                    return lhs < rhs
-                    
-                })
-                */
-                
                 let section = weakSelf.sortedContactKeys.index(of: key)!
                 weakSelf.tableView.insertSections(IndexSet(integer: section), with: .fade)
                 //print("(\(section),\(key))")
@@ -495,6 +478,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     }
     
     override open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        if !(style?.showHeader ?? true) {
+            return nil
+        }
+        
         if showSearchResults {
             if showsNoResults { return nil }
             else { return "Search Results" }

@@ -94,6 +94,19 @@ class EPContactCell: UITableViewCell {
                 self.contactDetailTextLabel.text = EPGlobalConstants.Strings.phoneNumberNotAvaialable
             }
             contactTextLabelCenterAlign.isActive = false
+        case SubtitleCellValue.phoneLabel:
+            let phoneNumberCount = contact.phoneNumbers.count
+            
+            if phoneNumberCount == 1  {
+                self.contactDetailTextLabel.text = "\(contact.phoneNumbers[0].phoneLabel)"
+            }
+            else if phoneNumberCount > 1 {
+                self.contactDetailTextLabel.text = "\(contact.phoneNumbers[0].phoneLabel) and \(contact.phoneNumbers.count-1) more"
+            }
+            else {
+                self.contactDetailTextLabel.text = EPGlobalConstants.Strings.phoneNumberNotAvaialable
+            }
+            contactTextLabelCenterAlign.isActive = false
         case SubtitleCellValue.email:
             let emailCount = contact.emails.count
         

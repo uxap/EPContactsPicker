@@ -32,9 +32,9 @@ public struct EPContactsPickerStyle {
     public var initialBackgroundColors: [UIColor]?
     
     public var showPicuture = true
-    public var showSubtitle = true
     public var showIndexBar = true
     public var showSearchBar = true
+    public var showHeader = true
     
     public init() {
     }
