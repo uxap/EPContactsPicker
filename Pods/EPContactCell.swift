@@ -62,7 +62,7 @@ class EPContactCell: UITableViewCell {
     func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactsPickerStyle? = nil) {
         self.contact = contact
         //Update all UI in the cell here
-        self.contactTextLabel?.attributedText = contact.attributedFullName
+        self.contactTextLabel?.text = contact.fullName
         updateSubtitleBasedonType(subtitleType, contact: contact)
         if contact.thumbnailProfileImage != nil {
             self.contactImageView?.image = contact.thumbnailProfileImage
