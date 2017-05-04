@@ -304,6 +304,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
         
         orderedContacts = [:]
+        sortedContactKeys = []
+        
         tableView.beginUpdates()
         
         
