@@ -181,10 +181,7 @@ public extension EPContact {
         }
         self.lastName = lastName
         
-        guard let fullName = dict["fullName"] as? String else {
-            return nil
-        }
-        self.fullName = fullName
+        self.fullName = dict["fullName"] as? String
         
         guard let nameOrderInt = dict["nameOrder"] as? Int else {
             return nil
@@ -200,20 +197,11 @@ public extension EPContact {
         }
         self.company = company
         
-        guard let birthday = dict["birthday"] as? Date else {
-            return nil
-        }
-        self.birthday = birthday
+        self.birthday = dict["birthday"] as? Date
         
-        guard let birthdayString = dict["birthdayString"] as? String else {
-            return nil
-        }
-        self.birthdayString = birthdayString
+        self.birthdayString = dict["birthdayString"] as? String
         
-        guard let contactId = dict["contactId"] as? String else {
-            return nil
-        }
-        self.contactId = contactId
+        self.contactId = dict["contactId"] as? String
         
         guard let phoneNumbersArray = dict["phoneNumbers"] as? [[String:String]] else {
             return nil
