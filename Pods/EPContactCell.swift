@@ -17,6 +17,7 @@ class EPContactCell: UITableViewCell {
     @IBOutlet weak var titleTopMargin: NSLayoutConstraint!
     @IBOutlet weak var subtitleTopMargin: NSLayoutConstraint!
     
+    @IBOutlet var contactTextLabelCenterAlign: NSLayoutConstraint!
     @IBOutlet weak var contactTextLabel: UILabel!
     @IBOutlet weak var contactDetailTextLabel: UILabel!
     @IBOutlet weak var contactImageView: UIImageView!
@@ -92,6 +93,7 @@ class EPContactCell: UITableViewCell {
             else {
                 self.contactDetailTextLabel.text = EPGlobalConstants.Strings.phoneNumberNotAvaialable
             }
+            contactTextLabelCenterAlign.isActive = false
         case SubtitleCellValue.email:
             let emailCount = contact.emails.count
         
@@ -104,10 +106,16 @@ class EPContactCell: UITableViewCell {
             else {
                 self.contactDetailTextLabel.text = EPGlobalConstants.Strings.emailNotAvaialable
             }
+            self.contactTextLabelCenterAlign.isActive = false
         case SubtitleCellValue.birthday:
             self.contactDetailTextLabel.text = contact.birthdayString
+            self.contactTextLabelCenterAlign.isActive = false
         case SubtitleCellValue.organization:
             self.contactDetailTextLabel.text = contact.company
+            contactTextLabelCenterAlign.isActive = false
+        case .none:
+            self.contactDetailTextLabel.text = nil
+            contactTextLabelCenterAlign.isActive = true
         }
     }
 }

@@ -27,6 +27,7 @@ public extension EPPickerDelegate {
 }
 
 public enum SubtitleCellValue{
+    case none
     case phoneNumber
     case email
     case birthday
@@ -301,6 +302,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
   
       open func reloadContacts() {
         
+        
+        orderedContacts = [:]
         tableView.beginUpdates()
         
         

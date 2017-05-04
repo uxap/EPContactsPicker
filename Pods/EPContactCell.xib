@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,14 +18,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HUe-8f-NjY">
-                        <rect key="frame" x="60" y="10" width="250" height="21"/>
+                        <rect key="frame" x="60" y="10" width="250" height="39.5"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tqx-Gt-ofy">
-                        <rect key="frame" x="60" y="35" width="234" height="18"/>
+                        <rect key="frame" x="60" y="53.5" width="234" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
@@ -61,6 +61,7 @@
                     <constraint firstItem="HUe-8f-NjY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="R7t-dd-hcs"/>
                     <constraint firstItem="Tqx-Gt-ofy" firstAttribute="top" secondItem="HUe-8f-NjY" secondAttribute="bottom" constant="4" id="aNx-bp-Uj5"/>
                     <constraint firstAttribute="trailing" secondItem="HUe-8f-NjY" secondAttribute="trailing" constant="10" id="cOY-df-aFi"/>
+                    <constraint firstItem="HUe-8f-NjY" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="jwG-44-Rtc"/>
                     <constraint firstItem="Bvt-tZ-NrJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="m7q-1p-kjc"/>
                     <constraint firstItem="Tqx-Gt-ofy" firstAttribute="leading" secondItem="HUe-8f-NjY" secondAttribute="leading" id="px8-ev-Ebj"/>
                 </constraints>
@@ -71,6 +72,7 @@
                 <outlet property="contactImageView" destination="mxT-DB-6lI" id="aYl-FS-HAU"/>
                 <outlet property="contactInitialLabel" destination="S1U-vh-OnF" id="LBj-Ki-StS"/>
                 <outlet property="contactTextLabel" destination="HUe-8f-NjY" id="Smr-wZ-MHr"/>
+                <outlet property="contactTextLabelCenterAlign" destination="jwG-44-Rtc" id="sYv-49-ZRP"/>
                 <outlet property="photoHeight" destination="pAq-lQ-W6t" id="cUo-VZ-C7A"/>
                 <outlet property="photoLeftMargin" destination="m7q-1p-kjc" id="aFS-W2-Qfb"/>
                 <outlet property="photoRightMargin" destination="8Ws-h4-oJp" id="sDq-X5-6N3"/>

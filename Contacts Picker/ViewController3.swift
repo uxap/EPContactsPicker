@@ -21,7 +21,7 @@ class ViewController3 : UIViewController {
         style.photoRightMargin = 16
         style.photoSize = CGSize(width: 40, height: 40)
         style.titleTopMargin = 17
-        style.titleFont = UIFont.boldSystemFont(ofSize: 14)
+        style.titleFont = UIFont.systemFont(ofSize: 20)
         style.titleColor = UIColor.white
         style.subtitleTopMargin = 6
         style.subtitleFont = UIFont.systemFont(ofSize: 14)
@@ -61,7 +61,7 @@ class ViewController3 : UIViewController {
     }()
     
     lazy var contactsPicker: EPContactsPicker = {
-        let picker = EPContactsPicker(delegate: self, multiSelection: false)
+        let picker = EPContactsPicker(delegate: self, multiSelection: false, subtitleCellType: .none)
         picker.style = self.style
         picker.headerStyle = self.headerStyle
         return picker

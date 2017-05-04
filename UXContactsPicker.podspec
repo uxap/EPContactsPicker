@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "UXContactsPicker"
-  s.version          = "2.7.3"
+  s.version          = "2.8.0"
   s.summary          = "A contacts picker component for iOS written in swift using new contacts framwork"
   s.description      = <<-DESC
 Features
