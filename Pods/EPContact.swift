@@ -137,7 +137,7 @@ public struct EPContact {
 
 public extension EPContact {
     
-    public var dictionaryRepresentation: [String:Any?] {
+    public var dictionaryRepresentation: [String:Any] {
         
         var dict = [String:Any]()
         dict["sectionKey"] = sectionKey
@@ -164,7 +164,7 @@ public extension EPContact {
 
 public extension EPContact {
     
-    public init?(dict:[String:Any?]) {
+    public init?(dict:[String:Any]) {
         
         guard let sectionKey = dict["sectionKey"] as? String else {
             return nil
