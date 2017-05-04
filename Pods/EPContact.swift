@@ -215,7 +215,7 @@ public extension EPContact {
         }
         self.contactId = contactId
         
-        guard let phoneNumbersArray = dict["phoneNUmbers"] as? [[String:String]] else {
+        guard let phoneNumbersArray = dict["phoneNumbers"] as? [[String:String]] else {
             return nil
         }
         self.phoneNumbers = phoneNumbersArray.reduce([], {
