@@ -374,12 +374,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         if showSearchResults {
             contact = filteredContacts[(indexPath as NSIndexPath).row]
         } else {
-			guard let contactsForSection = orderedContacts[sortedContactKeys[(indexPath as NSIndexPath).section]] else {
-				assertionFailure()
-				return UITableViewCell()
+			guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+				fatalError()
 			}
 
-			contact = contactsForSection[(indexPath as NSIndexPath).row]
+			contact = contactsForSection[indexPath.row]
         }
 		
         if multiSelectEnabled  && selectedContacts.contains(where: { $0.contactId == contact.contactId }) {
@@ -526,6 +525,48 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             return super.tableView(tableView, heightForHeaderInSection: section)
         }
     }
+    
+    open override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if showSearchResults {
+            return false
+        }
+        
+        guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+            fatalError()
+        }
+        
+        let contact = contactsForSection[indexPath.row]
+        return dataSource.canDelete(contact: contact)
+        
+    }
+    
+    open override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+    }
+    
+    open override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .delete
+    }
+    
+    open override func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+    }
+    
+    open override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+            fatalError()
+        }
+        let contact = contactsForSection[indexPath.row]
+        
+        dataSource.delete(contact: contact) { error in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                tableView.setEditing(false, animated: true)
+            } else {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+        }
+    }
+    
     
     // MARK: - Button Actions
     

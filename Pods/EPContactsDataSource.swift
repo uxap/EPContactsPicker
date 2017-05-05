@@ -17,6 +17,10 @@ public protocol EPContactsDataSource {
     
     func searchContacts(searchText:String, completion: @escaping ([EPContact])->Void )
     
+    
+    func canDelete(contact:EPContact) -> Bool
+    func delete(contact:EPContact, completion: ((Error?)->Void)? )
+    
 }
 
 public extension EPContactsDataSource {
@@ -135,7 +139,11 @@ public extension EPContactsDataSource {
         ]
     }
     
-    
+    func canDelete(contact:EPContact) -> Bool { return false }
+    func delete(contact:EPContact, completion: ((Error?)->Void)? ) {
+        let error = NSError(domain: "EPContactPickerErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "Not supported"])
+        completion?(error)
+    }
 }
 
 fileprivate var enableThreading = false
