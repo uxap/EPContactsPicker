@@ -574,12 +574,18 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 if contactsForSection.count > 0 {
                     weakSelf.orderedContacts[key]
                         = contactsForSection
+                    
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                    
                 } else {
                     weakSelf.orderedContacts.removeValue(forKey: key)
                     weakSelf.sortedContactKeys.remove(at:indexPath.section)
+                    
+                    tableView.deleteSections(
+                        IndexSet(integer: indexPath.section),
+                        with: .automatic)
                 }
                 
-                tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         }
     }
