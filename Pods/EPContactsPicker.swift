@@ -550,16 +550,35 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     open override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-        guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+        let key = sortedContactKeys[indexPath.section]
+        guard var contactsForSection = orderedContacts[key] else {
             fatalError()
         }
         let contact = contactsForSection[indexPath.row]
         
-        dataSource.delete(contact: contact) { error in
+        dataSource.delete(contact: contact) {
+            [weak self]
+            error in
+            
+            guard let weakSelf = self else {
+                return
+            }
+            
             if let error = error {
                 print("Error: \(error.localizedDescription)")
                 tableView.setEditing(false, animated: true)
+
             } else {
+                
+                contactsForSection.remove(at: indexPath.row)
+                if contactsForSection.count > 0 {
+                    weakSelf.orderedContacts[key]
+                        = contactsForSection
+                } else {
+                    weakSelf.orderedContacts.removeValue(forKey: key)
+                    weakSelf.sortedContactKeys.remove(at:indexPath.section)
+                }
+                
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         }
