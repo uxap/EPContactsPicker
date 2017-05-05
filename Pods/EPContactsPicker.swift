@@ -9,19 +9,19 @@
 import UIKit
 
 public protocol EPPickerDelegate {
-	func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError)
+    func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError)
     func epContactPicker(_: EPContactsPicker, didCancel error: NSError)
     func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact)
-	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact])
+    func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact])
     func epContactPickerSearchDidEnd(_: EPContactsPicker)
     func epContactPickerShouldAutoDismiss(_: EPContactsPicker) -> Bool
 }
 
 public extension EPPickerDelegate {
-	func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError) { }
-	func epContactPicker(_: EPContactsPicker, didCancel error: NSError) { }
-	func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) { }
-	func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) { }
+    func epContactPicker(_: EPContactsPicker, didContactFetchFailed error: NSError) { }
+    func epContactPicker(_: EPContactsPicker, didCancel error: NSError) { }
+    func epContactPicker(_: EPContactsPicker, didSelectContact contact: EPContact) { }
+    func epContactPicker(_: EPContactsPicker, didSelectMultipleContacts contacts: [EPContact]) { }
     func epContactPickerSearchDidEnd(_: EPContactsPicker) { }
     func epContactPickerShouldAutoDismiss(_: EPContactsPicker) -> Bool { return true }
 }
@@ -35,7 +35,7 @@ public enum SubtitleCellValue{
     case organization
 }
 
-open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
+open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
     
     class CustomSearchBar: UISearchBar {
         
@@ -62,6 +62,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     // MARK: - Properties
     
+    open var tableView: UITableView!
     open var contactDelegate: EPPickerDelegate?
     public var dataSource:EPContactsDataSource = EPDefaultDataSource()
     var resultSearchController = UISearchController()
@@ -78,24 +79,57 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         return resultSearchController.searchBar
     }
     
-    var noResultLabel: UILabel!
-    var showsNoResults = false {
+    lazy var emptyViewLabel: UILabel = {
+        [unowned self] in
+        
+        let label = UILabel(frame: self.view.bounds)
+        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        label.backgroundColor =
+            self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+        label.textColor =
+            self.searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
+        
+        label.font = self.searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
+        label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        label.text = "No Results"
+        return label
+    }()
+    
+    lazy var emptyView:UIView = {
+        [unowned self] in
+        
+        let v = UIView(frame: self.view.bounds)
+        v.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        v.backgroundColor =
+            self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+        
+        self.emptyViewLabel.frame = v.bounds
+        v.addSubview(self.emptyViewLabel)
+        return v
+        
+    }()
+    
+    var showsEmptyView = false {
         didSet {
-            if showsNoResults {
-                noResultLabel.frame = view.bounds
-                view.addSubview(noResultLabel)
-                tableView.isScrollEnabled = false
+            if showsEmptyView {
+                emptyView.frame = view.bounds
+                view.addSubview(emptyView)
+                if resultSearchController.isActive {
+                    emptyViewLabel.text = "No Results"
+                } else {
+                    emptyViewLabel.text = "No Contacts"
+                }
             } else {
-                noResultLabel.removeFromSuperview()
-                tableView.isScrollEnabled = true
+                emptyView.removeFromSuperview()
             }
         }
     }
     var showSearchResults: Bool {
         return
             resultSearchController.isActive &&
-            filteredContacts.count >= 0 &&
-            resultSearchController.searchBar.text?.characters.count ?? 0 > 0
+                filteredContacts.count >= 0 &&
+                resultSearchController.searchBar.text?.characters.count ?? 0 > 0
     }
     
     public var style: EPContactsPickerStyle? {
@@ -123,13 +157,23 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
+    var isEmpty:Bool {
+        print(orderedContacts)
+        return orderedContacts.isEmpty
+    }
+    
     // MARK: - Lifecycle Methods
     
     override open func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView = UITableView(frame: view.bounds, style: .plain)
+        tableView.dataSource = self
+        tableView.delegate = self
+        view.addSubview(tableView)
+        
         self.title = EPGlobalConstants.Strings.contactsTitle
-
+        
         registerContactCell()
         inititlizeBarButtons()
         initializeSearchBar()
@@ -138,6 +182,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         if let style = style {
             setupTable(style: style)
         }
+        
+        showsEmptyView = isEmpty
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -161,23 +207,6 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     func initializeSearchBar() {
         
-        noResultLabel = {
-            [unowned self] in
-            
-            let label = UILabel(frame: self.view.bounds)
-            label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            label.backgroundColor =
-                self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
-            label.textColor =
-                self.searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
-            
-            label.font = self.searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
-            label.textAlignment = .center
-            label.isUserInteractionEnabled = true
-            label.text = "No Results"
-            return label
-        }()
-        
         resultSearchController = {
             [unowned self] in
             
@@ -188,7 +217,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 } else {
                     return CustomSearchController(searchResultsController: nil)
                 }
-               
+                
             }()
             
             controller.searchResultsUpdater = self
@@ -204,7 +233,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                 controller.hidesNavigationBarDuringPresentation = false
             }
             return controller
-        } ()
+            } ()
     }
     
     func inititlizeBarButtons() {
@@ -238,26 +267,26 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             tableView.register(cellNib, forCellReuseIdentifier: "Cell")
         }
     }
-
+    
     override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     // MARK: - Initializers
-  
+    
     convenience public init(delegate: EPPickerDelegate?) {
         self.init(delegate: delegate, multiSelection: false)
     }
     
     convenience public init(delegate: EPPickerDelegate?, multiSelection : Bool) {
-        self.init(style: .plain)
+        self.init(nibName: nil, bundle: nil)
         self.multiSelectEnabled = multiSelection
         contactDelegate = delegate
     }
-
+    
     convenience public init(delegate: EPPickerDelegate?, multiSelection : Bool, subtitleCellType: SubtitleCellValue) {
-        self.init(style: .plain)
+        self.init(nibName: nil, bundle: nil)
         self.multiSelectEnabled = multiSelection
         contactDelegate = delegate
         subtitleCellValue = subtitleCellType
@@ -268,6 +297,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     func setupTable(style:EPContactsPickerStyle) {
         tableView.backgroundColor = style.backgroundColor
         tableView.separatorColor = style.seperatorColor
+        tableView.separatorStyle = style.seperatorStyle ?? .singleLine
         
         if (!style.showSearchBar) {
             tableView.tableHeaderView = nil
@@ -297,8 +327,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     
     
     // MARK: - Contact Operations
-  
-      open func reloadContacts() {
+    
+    open func reloadContacts() {
         
         
         orderedContacts = [:]
@@ -306,10 +336,17 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
         
         
-        dataSource.loadContacts(self, completion: { error in
-
+        dataSource.loadContacts(self, completion: {
+            
+            [weak self] error in
+            
+            guard let weakSelf = self else {
+                return
+            }
+            
             //self.tableView.endUpdates()
-            self.tableView.reloadData()
+            weakSelf.showsEmptyView = weakSelf.isEmpty
+            weakSelf.tableView.reloadData()
             
         }) { [weak self] contact in
             
@@ -320,11 +357,11 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             let key = contact.sectionKey
             
             if let _ /* section */ = weakSelf.sortedContactKeys.index(of: key) {
-            
+                
                 let _ /* row */ = weakSelf.orderedContacts[key]!.count
                 weakSelf.orderedContacts[key]?.append(contact)
                 //weakSelf.tableView.insertRows(at: [IndexPath(row: row, section: section)], with: .fade)
-
+                
                 
             } else {
                 
@@ -338,27 +375,27 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             
         }
         
-      }
-  
+    }
+    
     
     // MARK: - Table View DataSource
     
-    override open func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         if showSearchResults { return 1 }
         return sortedContactKeys.count
     }
     
-    override open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if showSearchResults { return filteredContacts.count }
         if let contactsForSection = orderedContacts[sortedContactKeys[section]] {
             return contactsForSection.count
         }
         return 0
     }
-
+    
     // MARK: - Table View Delegates
-
-    override open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! EPContactCell
         cell.accessoryType = UITableViewCellAccessoryType.none
         
@@ -367,18 +404,18 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
         
         //Convert CNContact to EPContact
-		let contact: EPContact
+        let contact: EPContact
         
         if showSearchResults {
             contact = filteredContacts[(indexPath as NSIndexPath).row]
         } else {
-			guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
-				fatalError()
-			}
-
-			contact = contactsForSection[indexPath.row]
+            guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+                fatalError()
+            }
+            
+            contact = contactsForSection[indexPath.row]
         }
-		
+        
         if multiSelectEnabled  && selectedContacts.contains(where: { $0.contactId == contact.contactId }) {
             cell.accessoryType = UITableViewCellAccessoryType.checkmark
         }
@@ -388,12 +425,12 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         } else {
             cell.selectionStyle = .none
         }
-		
+        
         cell.updateContactsinUI(contact, indexPath: indexPath, subtitleType: subtitleCellValue, style: style)
         return cell
     }
     
-    override open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! EPContactCell
         let selectedContact =  cell.contact!
@@ -444,7 +481,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    override open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let style = style {
             return style.rowHeight
         } else {
@@ -452,20 +489,20 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    override open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+    open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         if showSearchResults { return 0 }
-        tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: UITableViewScrollPosition.top , animated: false)        
+        tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: UITableViewScrollPosition.top , animated: false)
         return sortedContactKeys.index(of: title)!
     }
     
-    override open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         if let style = style {
             cell.backgroundColor = style.cellBackgroundColor
         }
     }
     
-    override  open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+    open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
         if showSearchResults { return nil }
         
@@ -476,20 +513,20 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         }
     }
     
-    override open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
         if !(style?.showHeader ?? true) {
             return nil
         }
         
         if showSearchResults {
-            if showsNoResults { return nil }
+            if showsEmptyView { return nil }
             else { return "Search Results" }
         }
         return sortedContactKeys[section]
     }
     
-    override open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         if let headerStyle = headerStyle,
             let text = self.tableView(tableView, titleForHeaderInSection: section) {
@@ -510,21 +547,21 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             return view
             
         } else {
-            return super.tableView(tableView, viewForHeaderInSection: section)
+            return nil
         }
     }
     
-    override open func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    open func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
         if let headerStyle = headerStyle,
             let _ = self.tableView(tableView, titleForHeaderInSection: section) {
             return headerStyle.height
         } else {
-            return super.tableView(tableView, heightForHeaderInSection: section)
+            return CGFloat(0)
         }
     }
     
-    open override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if showSearchResults {
             return false
         }
@@ -538,17 +575,17 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         
     }
     
-    open override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
     }
     
-    open override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         return .delete
     }
     
-    open override func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+    open func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
     }
     
-    open override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
         let key = sortedContactKeys[indexPath.section]
         guard var contactsForSection = orderedContacts[key] else {
@@ -567,7 +604,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             if let error = error {
                 print("Error: \(error.localizedDescription)")
                 tableView.setEditing(false, animated: true)
-
+                
             } else {
                 
                 contactsForSection.remove(at: indexPath.row)
@@ -585,6 +622,8 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
                         IndexSet(integer: indexPath.section),
                         with: .automatic)
                 }
+                
+                weakSelf.showsEmptyView = weakSelf.isEmpty
                 
             }
         }
@@ -612,7 +651,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
             dataSource.searchContacts(searchText: searchText, completion: { result in
                 
                 self.filteredContacts = result
-                self.showsNoResults = self.filteredContacts.count == 0 && searchText.characters.count > 0
+                self.showsEmptyView = self.filteredContacts.count == 0 && searchText.characters.count > 0
                 self.tableView.reloadData()
                 
             })
@@ -625,7 +664,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
             self.contactDelegate?.epContactPickerSearchDidEnd(self)
-            self.showsNoResults = false
+            self.showsEmptyView = self.isEmpty
         })
     }
     
@@ -643,7 +682,7 @@ extension EPContactsPicker {
         resultSearchController.isActive = false
         tableView.reloadData()
         contactDelegate?.epContactPickerSearchDidEnd(self)
-        showsNoResults = false
+        showsEmptyView = self.isEmpty
         
     }
 }

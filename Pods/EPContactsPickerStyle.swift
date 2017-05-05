@@ -26,6 +26,7 @@ public struct EPContactsPickerStyle {
     public var cellBackgroundColor = UIColor.white
     public var backgroundColor = UIColor.white
     public var seperatorColor: UIColor?
+    public var seperatorStyle: UITableViewCellSeparatorStyle?
     
     public var initialFont = UIFont.systemFont(ofSize: 17)
     public var initialColor = UIColor.white
