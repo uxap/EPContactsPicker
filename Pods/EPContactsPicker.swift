@@ -112,9 +112,21 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     var showsEmptyView = false {
         didSet {
+            
+            guard isViewLoaded else {
+                return
+            }
+            
             if showsEmptyView {
                 emptyView.frame = view.bounds
                 view.addSubview(emptyView)
+                
+                emptyViewLabel.backgroundColor =
+                    searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+                emptyViewLabel.textColor =
+                    searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
+                emptyViewLabel.font = searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
+                
                 if resultSearchController.isActive {
                     emptyViewLabel.text = "No Results"
                 } else {
@@ -158,7 +170,6 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     var isEmpty:Bool {
-        print(orderedContacts)
         return orderedContacts.isEmpty
     }
     
@@ -233,7 +244,9 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                 controller.hidesNavigationBarDuringPresentation = false
             }
             return controller
-            } ()
+        } ()
+        
+        setupEmptyViewLabel()
     }
     
     func inititlizeBarButtons() {
@@ -323,6 +336,19 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
         
+    }
+    
+    func setupEmptyViewLabel() {
+        
+        guard isViewLoaded else {
+            return
+        }
+        
+        emptyViewLabel.backgroundColor =
+            searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+        emptyViewLabel.textColor =
+            searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
+        emptyViewLabel.font = searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
     }
     
     
