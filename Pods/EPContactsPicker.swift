@@ -37,8 +37,6 @@ public enum SubtitleCellValue{
 
 open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
     
-    public struct DataSource: EPContactsDataSource {}
-    
     class CustomSearchBar: UISearchBar {
         
         override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
@@ -65,7 +63,7 @@ open class EPContactsPicker: UITableViewController, UISearchResultsUpdating, UIS
     // MARK: - Properties
     
     open var contactDelegate: EPPickerDelegate?
-    public var dataSource:EPContactsDataSource = DataSource()
+    public var dataSource:EPContactsDataSource = EPDefaultDataSource()
     var resultSearchController = UISearchController()
     var orderedContacts = [String: [EPContact]]() //Contacts ordered in dicitonary alphabetically
     var sortedContactKeys = [String]()

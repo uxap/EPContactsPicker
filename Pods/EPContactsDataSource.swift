@@ -23,7 +23,7 @@ public protocol EPContactsDataSource {
     
 }
 
-public extension EPContactsDataSource {
+struct EPDefaultDataSource : EPContactsDataSource {
     
     func loadContacts(_ contactPicker: EPContactsPicker,
                       completion: ((Error?)->Void)?,
