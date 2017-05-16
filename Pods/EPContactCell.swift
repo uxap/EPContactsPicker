@@ -8,8 +8,8 @@
 
 import UIKit
 
-class EPContactCell: UITableViewCell {
-
+public class EPContactCell: UITableViewCell {
+    
     @IBOutlet weak var photoLeftMargin: NSLayoutConstraint!
     @IBOutlet weak var photoRightMargin: NSLayoutConstraint!
     @IBOutlet weak var photoWidth: NSLayoutConstraint!
@@ -18,15 +18,15 @@ class EPContactCell: UITableViewCell {
     @IBOutlet weak var subtitleTopMargin: NSLayoutConstraint!
     
     @IBOutlet var contactTextLabelCenterAlign: NSLayoutConstraint!
-    @IBOutlet weak var contactTextLabel: UILabel!
-    @IBOutlet weak var contactDetailTextLabel: UILabel!
-    @IBOutlet weak var contactImageView: UIImageView!
-    @IBOutlet weak var contactInitialLabel: UILabel!
-    @IBOutlet weak var contactContainerView: UIView!
+    @IBOutlet public weak var contactTextLabel: UILabel!
+    @IBOutlet public weak var contactDetailTextLabel: UILabel!
+    @IBOutlet public weak var contactImageView: UIImageView!
+    @IBOutlet public weak var contactInitialLabel: UILabel!
+    @IBOutlet public weak var contactContainerView: UIView!
     
     var contact: EPContact?
     
-    override func awakeFromNib() {
+    override public func awakeFromNib() {
         
         super.awakeFromNib()
         // Initialization code
@@ -34,15 +34,15 @@ class EPContactCell: UITableViewCell {
         contactContainerView.layer.masksToBounds = true
         contactContainerView.layer.cornerRadius = contactContainerView.frame.size.width/2
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
+    
+    override public func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         contactContainerView.layer.masksToBounds = true
-        contactContainerView.layer.cornerRadius = contactContainerView.frame.size.width/2        
+        contactContainerView.layer.cornerRadius = photoWidth.constant/2
     }
     
     func updateInitialsColorForIndexPath(_ indexpath: IndexPath, style:EPContactsPickerStyle? = nil) {
@@ -59,7 +59,7 @@ class EPContactCell: UITableViewCell {
             contactInitialLabel.textColor = color
         }
     }
- 
+    
     func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactsPickerStyle? = nil) {
         self.contact = contact
         //Update all UI in the cell here
@@ -109,7 +109,7 @@ class EPContactCell: UITableViewCell {
             contactTextLabelCenterAlign.isActive = false
         case SubtitleCellValue.email:
             let emailCount = contact.emails.count
-        
+            
             if emailCount == 1  {
                 self.contactDetailTextLabel.text = "\(contact.emails[0].email)"
             }
