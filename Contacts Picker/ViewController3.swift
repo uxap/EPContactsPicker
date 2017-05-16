@@ -29,6 +29,7 @@ class ViewController3 : UIViewController {
         
         style.backgroundColor = UIColor(colorLiteralRed: 14.0/255.0, green: 15.0/255.0, blue: 26.0/255.0, alpha: 1.0)
         style.cellBackgroundColor = style.backgroundColor
+        style.cellHighlightColor = UIColor(colorLiteralRed: 0.608, green: 0.608, blue: 0.608, alpha: 0.3)
         style.seperatorColor = UIColor.white.withAlphaComponent(0.08)
         
         style.initialBackgroundColors = [

@@ -23,6 +23,7 @@ public struct EPContactsPickerStyle {
     public var subtitleColor = UIColor(colorLiteralRed: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0)
     public var subtitleTopMargin = CGFloat(4)
     
+    public var cellHighlightColor: UIColor?
     public var cellBackgroundColor = UIColor.white
     public var backgroundColor = UIColor.white
     public var seperatorColor: UIColor?

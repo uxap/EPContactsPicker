@@ -63,6 +63,12 @@ public class EPContactCell: UITableViewCell {
     func updateContactsinUI(_ contact: EPContact, indexPath: IndexPath, subtitleType: SubtitleCellValue, style:EPContactsPickerStyle? = nil) {
         self.contact = contact
         //Update all UI in the cell here
+        if let cellHighlightColor = style?.cellHighlightColor {
+            let view = UIView()
+            view.backgroundColor = cellHighlightColor
+            selectedBackgroundView = view
+        }
+        
         self.contactTextLabel?.text = contact.fullName
         updateSubtitleBasedonType(subtitleType, contact: contact)
         if contact.thumbnailProfileImage != nil {
