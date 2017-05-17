@@ -181,6 +181,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(tableView)
         
         self.title = EPGlobalConstants.Strings.contactsTitle
