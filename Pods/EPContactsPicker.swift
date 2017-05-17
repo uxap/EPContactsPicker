@@ -355,6 +355,26 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     // MARK: - Contact Operations
     
+    open func indexPath(for contact:EPContact) -> IndexPath? {
+        
+        guard let contacts = orderedContacts[contact.sectionKey] else {
+            return nil
+        }
+        
+        guard let row = contacts.index(where: { element -> Bool in
+            return element.contactId == contact.contactId
+        }) else {
+            return nil
+        }
+        
+        guard let section = self.sortedContactKeys.index(of: contact.sectionKey) else {
+            return nil
+        }
+        
+        return IndexPath(row: row, section: section)
+        
+    }
+    
     open func reloadContacts() {
         
         
@@ -483,6 +503,10 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                 
                 if (style?.showSearchBar ?? true) {
                     delay = 0.7
+                }
+                
+                if let indexPath = self.indexPath(for: selectedContact) {
+                    tableView.selectRow(at: indexPath, animated: false, scrollPosition: .top)
                 }
             }
             
