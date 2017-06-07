@@ -20,10 +20,35 @@ public protocol EPContactsDataSource {
     
     func canDelete(contact:EPContact) -> Bool
     func delete(contact:EPContact, completion: ((Error?)->Void)? )
+    func onChanged(_ handler:@escaping ()->Void)
     
 }
 
-struct EPDefaultDataSource : EPContactsDataSource {
+public extension EPContactsDataSource {
+    func onChanged(_ handler:@escaping ()->Void) {}
+}
+
+class EPDefaultDataSource : EPContactsDataSource {
+    
+    var changedHandler:(()->Void)?
+    var observer:Any!
+    
+    init() {
+        
+        observer = NotificationCenter.default
+            .addObserver(forName: NSNotification.Name.CNContactStoreDidChange,
+                         object: nil, queue: nil) {
+            [weak self]
+            notification in
+                            
+            self?.changedHandler?()
+                            
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(observer)
+    }
     
     func loadContacts(_ contactPicker: EPContactsPicker,
                       completion: ((Error?)->Void)?,
@@ -144,6 +169,11 @@ struct EPDefaultDataSource : EPContactsDataSource {
         let error = NSError(domain: "EPContactPickerErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "Not supported"])
         completion?(error)
     }
+    
+    func onChanged(_ handler:@escaping ()->Void) {
+        changedHandler = handler
+    }
+    
 }
 
 fileprivate var enableThreading = false

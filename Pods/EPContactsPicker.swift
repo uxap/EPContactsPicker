@@ -191,6 +191,11 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         initializeSearchBar()
         reloadContacts()
         
+        dataSource.onChanged {
+            [weak self] in
+            self?.reloadContacts()
+        }
+        
         if let style = style {
             setupTable(style: style)
         }
