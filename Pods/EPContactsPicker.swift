@@ -622,8 +622,12 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return false
         }
         
+        guard indexPath.section < sortedContactKeys.count else {
+            return false
+        }
+        
         guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
-            fatalError()
+            return false
         }
         
         let contact = contactsForSection[indexPath.row]
