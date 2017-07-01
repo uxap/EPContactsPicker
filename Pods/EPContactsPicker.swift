@@ -62,7 +62,15 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     // MARK: - Properties
     
-    public var customSections: EPContactsPickerCustomSections?
+    public var customSections: EPContactsPickerCustomSections? {
+        didSet {
+            if isViewLoaded {
+                customSections?.setup(tableView: tableView)
+                tableView.reloadData()
+            }
+        }
+    }
+    
     var numberOfCustomSections:Int {
         if isViewLoaded {
             return customSections?.numberOfSections?(in: tableView) ?? 0
@@ -455,7 +463,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         if showSearchResults { return filteredContacts.count }
         
         guard section >= numberOfCustomSections else {
-            return customSections?.numberOfSections?(in: tableView) ?? 0
+            return customSections?.tableView(tableView, numberOfRowsInSection: section) ?? 0
         }
     
         if let contactsForSection = orderedContacts[sortedContactKeys[section-numberOfCustomSections]] {
