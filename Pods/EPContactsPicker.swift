@@ -516,7 +516,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard indexPath.section >= numberOfCustomSections else {
+        guard indexPath.section >= numberOfCustomSections || showSearchResults else {
             customSections!.tableView?(tableView, didSelectRowAt:indexPath)
             return
         }
