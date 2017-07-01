@@ -41,7 +41,7 @@ class EPDefaultDataSource : EPContactsDataSource {
             [weak self]
             notification in
                             
-            mainThread {
+            DispatchQueue.main.async {
                             
                 self?.changedHandler?()
                             
