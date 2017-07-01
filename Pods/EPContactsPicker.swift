@@ -62,6 +62,15 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     // MARK: - Properties
     
+    public var customSections: EPContactsPickerCustomSections?
+    var numberOfCustomSections:Int {
+        if isViewLoaded {
+            return customSections?.numberOfSections?(in: tableView) ?? 0
+        } else {
+            return 0
+        }
+    }
+    
     open var tableView: UITableView!
     open var contactDelegate: EPPickerDelegate?
     public var dataSource:EPContactsDataSource = EPDefaultDataSource()
@@ -185,7 +194,8 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         view.addSubview(tableView)
         
         self.title = EPGlobalConstants.Strings.contactsTitle
-        
+
+        setupCustomSections()
         registerContactCell()
         inititlizeBarButtons()
         initializeSearchBar()
@@ -264,6 +274,10 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             self.navigationItem.rightBarButtonItem = doneButton
             
         }
+    }
+    
+    fileprivate func setupCustomSections() {
+        customSections?.setup(tableView: tableView)
     }
     
     fileprivate func registerContactCell() {
@@ -376,7 +390,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return nil
         }
         
-        return IndexPath(row: row, section: section)
+        return IndexPath(row: row, section: numberOfCustomSections + section)
         
     }
     
@@ -434,12 +448,17 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func numberOfSections(in tableView: UITableView) -> Int {
         if showSearchResults { return 1 }
-        return sortedContactKeys.count
+        return numberOfCustomSections + sortedContactKeys.count
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if showSearchResults { return filteredContacts.count }
-        if let contactsForSection = orderedContacts[sortedContactKeys[section]] {
+        
+        guard section >= numberOfCustomSections else {
+            return customSections?.numberOfSections?(in: tableView) ?? 0
+        }
+    
+        if let contactsForSection = orderedContacts[sortedContactKeys[section-numberOfCustomSections]] {
             return contactsForSection.count
         }
         return 0
@@ -448,6 +467,11 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     // MARK: - Table View Delegates
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        guard showSearchResults || indexPath.section >= numberOfCustomSections else {
+            return customSections!.tableView(tableView, cellForRowAt: indexPath)
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! EPContactCell
         cell.accessoryType = UITableViewCellAccessoryType.none
         
@@ -459,9 +483,9 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         let contact: EPContact
         
         if showSearchResults {
-            contact = filteredContacts[(indexPath as NSIndexPath).row]
+            contact = filteredContacts[indexPath.row]
         } else {
-            guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+            guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section - numberOfCustomSections]] else {
                 fatalError()
             }
             
@@ -483,6 +507,11 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard indexPath.section >= numberOfCustomSections else {
+            customSections!.tableView?(tableView, didSelectRowAt:indexPath)
+            return
+        }
         
         let cell = tableView.cellForRow(at: indexPath) as! EPContactCell
         let selectedContact =  cell.contact!
@@ -547,11 +576,21 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         if showSearchResults { return 0 }
+        
+        guard index >= numberOfCustomSections else {
+            return customSections!.tableView?(tableView, sectionForSectionIndexTitle:title, at:index) ?? 0
+        }
+        
         tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: UITableViewScrollPosition.top , animated: false)
-        return sortedContactKeys.index(of: title)!
+        return sortedContactKeys.index(of: title)! + numberOfCustomSections
     }
     
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        guard indexPath.section >= numberOfCustomSections else {
+            customSections!.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
+            return
+        }
         
         if let style = style {
             cell.backgroundColor = style.cellBackgroundColor
@@ -579,7 +618,12 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             if showsEmptyView { return nil }
             else { return "Search Results" }
         }
-        return sortedContactKeys[section]
+        
+        guard section >= numberOfCustomSections else {
+            return customSections!.tableView?(tableView, titleForHeaderInSection:section)
+        }
+        
+        return sortedContactKeys[section-numberOfCustomSections]
     }
     
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -622,11 +666,15 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return false
         }
         
-        guard indexPath.section < sortedContactKeys.count else {
+        guard indexPath.section >= numberOfCustomSections else {
+            return customSections!.tableView?(tableView, canEditRowAt:indexPath) ?? false
+        }
+        
+        guard indexPath.section-numberOfCustomSections < sortedContactKeys.count else {
             return false
         }
         
-        guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section]] else {
+        guard let contactsForSection = orderedContacts[sortedContactKeys[indexPath.section-numberOfCustomSections]] else {
             return false
         }
         
@@ -636,9 +684,17 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     open func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        guard indexPath.section >= numberOfCustomSections else {
+            customSections?.tableView?(tableView, willBeginEditingRowAt: indexPath)
+            return
+        }
     }
     
     open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        guard indexPath.section >= numberOfCustomSections else {
+            return customSections?.tableView?(tableView, editingStyleForRowAt: indexPath) ?? .none
+        }
+        
         return .delete
     }
     
@@ -647,7 +703,12 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-        let key = sortedContactKeys[indexPath.section]
+        guard indexPath.section >= numberOfCustomSections else {
+            customSections!.tableView?(tableView, commit: editingStyle, forRowAt: indexPath)
+            return
+        }
+        
+        let key = sortedContactKeys[indexPath.section-numberOfCustomSections]
         guard var contactsForSection = orderedContacts[key] else {
             fatalError()
         }
