@@ -694,6 +694,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             view.addSubview(label)
             
             label.text = text
+            label.font = headerStyle.font
             label.textColor = headerStyle.textColor
             
             return view
