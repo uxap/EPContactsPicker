@@ -187,7 +187,18 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     var isEmpty:Bool {
-        return orderedContacts.isEmpty
+        var isCustomSectionsEmpty = true
+        if let customSections = customSections {
+            let sectionCount = customSections.numberOfSections?(in: tableView) ?? 1
+            for section in 0..<sectionCount {
+                if customSections.tableView(tableView, numberOfRowsInSection: section) > 0 {
+                    isCustomSectionsEmpty = false
+                    break
+                }
+            }
+        }
+        
+        return orderedContacts.isEmpty && isCustomSectionsEmpty
     }
     
     // MARK: - Lifecycle Methods
@@ -456,7 +467,14 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func numberOfSections(in tableView: UITableView) -> Int {
         if showSearchResults { return 1 }
-        return numberOfCustomSections + sortedContactKeys.count
+        let sectionCount = numberOfCustomSections + sortedContactKeys.count
+
+        let isEmpty = self.isEmpty
+        if showsEmptyView != isEmpty {
+            showsEmptyView = isEmpty
+        }
+        
+        return sectionCount
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -475,6 +493,10 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     // MARK: - Table View Delegates
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if showsEmptyView != false {
+            showsEmptyView = false
+        }
         
         guard showSearchResults || indexPath.section >= numberOfCustomSections else {
             return customSections!.tableView(tableView, cellForRowAt: indexPath)
@@ -745,7 +767,8 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                     
                 } else {
                     weakSelf.orderedContacts.removeValue(forKey: key)
-                    weakSelf.sortedContactKeys.remove(at:indexPath.section)
+                    weakSelf.sortedContactKeys
+                        .remove(at:indexPath.section-weakSelf.numberOfCustomSections)
                     
                     tableView.deleteSections(
                         IndexSet(integer: indexPath.section),
