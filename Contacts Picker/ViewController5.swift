@@ -15,6 +15,9 @@ class ViewController5 : UIViewController {
     lazy var contactsPicker: EPContactsPicker = {
         let picker = EPContactsPicker(delegate: self, multiSelection: false)
         picker.customSections = self
+        picker.style = EPContactsPickerStyle()
+        // picker.style!.customSectionsSharedHeader = "Custom Sections"
+        // picker.style!.sectionsSharedHeader = "Contacts"
         return picker
     }()
 

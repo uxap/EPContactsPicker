@@ -73,7 +73,11 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     var numberOfCustomSections:Int {
         if isViewLoaded {
-            return customSections?.numberOfSections?(in: tableView) ?? 0
+            if let customSections = customSections {
+                return customSections.numberOfSections?(in: tableView) ?? 1
+            } else {
+                return 0
+            }
         } else {
             return 0
         }
@@ -639,6 +643,24 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        if let customSectionsSharedHeader = style?.customSectionsSharedHeader,
+            section < (customSections!.numberOfSections?(in: tableView) ?? 1) {
+            
+            if section == 0 {
+                return customSectionsSharedHeader
+            } else {
+                return nil
+            }
+        }
+        
+        if let sessionsSharedHeader = style?.sectionsSharedHeader {
+            if section == numberOfCustomSections {
+                return sessionsSharedHeader
+            } else {
+                return nil
+            }
+        }
         
         if !(style?.showHeader ?? true) {
             return nil
