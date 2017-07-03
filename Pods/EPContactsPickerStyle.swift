@@ -38,12 +38,6 @@ public struct EPContactsPickerStyle {
     public var showSearchBar = true
     public var showHeader = true
     
-    public var headerFont:UIFont?
-    public var headerColor:UIColor?
-    public var headerBackgroundColor:UIColor?
-    public var customSectionsSharedHeader:String?
-    public var sectionsSharedHeader:String?
-    
     public init() {
     }
     
@@ -73,6 +67,9 @@ public struct EPContactsPickerHeaderStyle {
     public var backgroundColor = UIColor(white: 0.9, alpha: 1.0)
     public var textColor = UIColor.black
     public var leftMargin = CGFloat(10)
+    public var customSectionsSharedHeader:String?
+    public var sectionsSharedHeader:String?
+    
     
     public init() {}
     

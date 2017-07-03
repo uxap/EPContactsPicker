@@ -644,7 +644,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
-        if let customSectionsSharedHeader = style?.customSectionsSharedHeader,
+        if let customSectionsSharedHeader = headerStyle?.customSectionsSharedHeader,
             section < (customSections!.numberOfSections?(in: tableView) ?? 1) {
             
             if section == 0 {
@@ -654,7 +654,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             }
         }
         
-        if let sessionsSharedHeader = style?.sectionsSharedHeader {
+        if let sessionsSharedHeader = headerStyle?.sectionsSharedHeader {
             if section == numberOfCustomSections {
                 return sessionsSharedHeader
             } else {
