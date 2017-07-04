@@ -120,17 +120,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         
         v.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
-        if let backgroundColor = self.searchBarStyle?.noResultsViewBackgroundColor {
-            v.backgroundColor = backgroundColor
-        }
-        
-        if let font = self.searchBarStyle?.noResultsViewFont {
-            v.textLabel.font = font
-        }
-        
-        if let textColor = self.searchBarStyle?.noResultsViewTextColor {
-            v.textLabel.textColor = textColor
-        }
+        self.applyStyleToEmptyView(v)
         
         return v
         
@@ -300,7 +290,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return controller
         } ()
         
-        setupEmptyViewLabel()
+        applyStyleToEmptyView(emptyView)
     }
     
     func inititlizeBarButtons() {
@@ -396,17 +386,37 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         
     }
     
-    func setupEmptyViewLabel() {
+    func applyStyleToEmptyView(_ emptyView:EPEmptyView) {
         
-        guard isViewLoaded else {
+        guard let style = searchBarStyle else {
             return
         }
         
-        emptyViewLabel.backgroundColor =
-            searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
-        emptyViewLabel.textColor =
-            searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
-        emptyViewLabel.font = searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
+        if let backgroundColor = style.noResultsViewBackgroundColor {
+            emptyView.backgroundColor = backgroundColor
+        }
+        
+        if let font = style.noResultsViewFont {
+            emptyView.textLabel.font = font
+        }
+
+        if let textColor = style.noResultsViewTextColor {
+            emptyView.textLabel.textColor = textColor
+        }
+        
+        if let image = style.noResultsViewImage {
+            emptyView.imageView.image = image
+        }
+        
+        if resultSearchController.isActive {
+            emptyView.textLabel.text =
+                searchBarStyle?.noResultsViewNoSearchResultsText ?? "No Results"
+        } else {
+            emptyView.textLabel.text =
+                searchBarStyle?.noResultsViewEmptyText ?? "No Contacts"
+        }
+        
+        
     }
     
     
