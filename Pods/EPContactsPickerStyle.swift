@@ -79,7 +79,10 @@ public struct EPContactsPickerSearchBarStyle {
     
     public var hasCancelButton = true
     public var noResultsViewBackgroundColor: UIColor?
+    public var noResultsViewImage: UIImage?
     public var noResultsViewFont: UIFont?
+    public var noResultsViewEmptyText: String?
+    public var noResultsViewNoSearchResultsText: String?
     public var noResultsViewTextColor: UIColor?
     public var keyboardAppearance = UIKeyboardAppearance.default
     

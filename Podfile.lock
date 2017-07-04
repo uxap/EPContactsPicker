@@ -1,5 +1,5 @@
 PODS:
-  - UXContactsPicker (2.5.1)
+  - UXContactsPicker (2.14.3)
 
 DEPENDENCIES:
   - UXContactsPicker (from `./`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  UXContactsPicker: b7e201f2c0b1da835a479ca5e0ef4c999371b239
+  UXContactsPicker: 8ce7b89b1322f78329d2c8f07b174999efac931a
 
 PODFILE CHECKSUM: 732e1b7db696b2485413cd1ce860434c7daf5849
 

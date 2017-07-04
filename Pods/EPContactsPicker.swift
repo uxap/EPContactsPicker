@@ -96,37 +96,42 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     var subtitleCellValue = SubtitleCellValue.phoneNumber
     var multiSelectEnabled: Bool = false //Default is single selection contact
     
+    var bundle:Bundle {
+        let podBundle = Bundle(for: self.classForCoder)
+        let bundleURL = podBundle.url(forResource: EPGlobalConstants.Strings.bundleIdentifier, withExtension: "bundle")!
+        return Bundle(url: bundleURL)!
+    }
+    
     public var searchBar: UISearchBar {
         return resultSearchController.searchBar
     }
     
     lazy var emptyViewLabel: UILabel = {
         [unowned self] in
-        
-        let label = UILabel(frame: self.view.bounds)
-        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        label.backgroundColor =
-            self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
-        label.textColor =
-            self.searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
-        
-        label.font = self.searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
-        label.textAlignment = .center
-        label.isUserInteractionEnabled = true
-        label.text = "No Results"
-        return label
+        return self.emptyView.textLabel
     }()
     
-    lazy var emptyView:UIView = {
+    lazy var emptyView:EPEmptyView = {
         [unowned self] in
         
-        let v = UIView(frame: self.view.bounds)
-        v.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        v.backgroundColor =
-            self.searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
+        let xib = UINib(nibName: "EPEmptyView", bundle: self.bundle)
+        let views = xib.instantiate(withOwner: self, options: nil) as! [UIView]
+        let v = views.first! as! EPEmptyView
         
-        self.emptyViewLabel.frame = v.bounds
-        v.addSubview(self.emptyViewLabel)
+        v.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        if let backgroundColor = self.searchBarStyle?.noResultsViewBackgroundColor {
+            v.backgroundColor = backgroundColor
+        }
+        
+        if let font = self.searchBarStyle?.noResultsViewFont {
+            v.textLabel.font = font
+        }
+        
+        if let textColor = self.searchBarStyle?.noResultsViewTextColor {
+            v.textLabel.textColor = textColor
+        }
+        
         return v
         
     }()
@@ -142,20 +147,23 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                 emptyView.frame = view.bounds
                 view.addSubview(emptyView)
                 
-                emptyViewLabel.backgroundColor =
-                    searchBarStyle?.noResultsViewBackgroundColor ?? UIColor(white:0.9, alpha:1.0)
                 emptyViewLabel.textColor =
                     searchBarStyle?.noResultsViewTextColor ?? UIColor.gray
-                emptyViewLabel.font = searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
+                emptyViewLabel.font =
+                    searchBarStyle?.noResultsViewFont ?? UIFont.systemFont(ofSize: 20)
                 
                 if resultSearchController.isActive {
-                    emptyViewLabel.text = "No Results"
+                    emptyViewLabel.text =
+                        searchBarStyle?.noResultsViewNoSearchResultsText ?? "No Results"
                 } else {
-                    emptyViewLabel.text = "No Contacts"
+                    emptyViewLabel.text =
+                        searchBarStyle?.noResultsViewEmptyText ?? "No Contacts"
                 }
+                
             } else {
                 emptyView.removeFromSuperview()
             }
+            
         }
     }
     var showSearchResults: Bool {
@@ -190,7 +198,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         }
     }
     
-    var isEmpty:Bool {
+    var isCustomSectionsEmpty:Bool {
         var isCustomSectionsEmpty = true
         if let customSections = customSections {
             let sectionCount = customSections.numberOfSections?(in: tableView) ?? 1
@@ -201,8 +209,15 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                 }
             }
         }
-        
-        return orderedContacts.isEmpty && isCustomSectionsEmpty
+        return isCustomSectionsEmpty
+    }
+    
+    var isSectionsEmpty:Bool {
+        return orderedContacts.isEmpty
+    }
+    
+    var isEmpty:Bool {
+        return isSectionsEmpty && isCustomSectionsEmpty
     }
     
     // MARK: - Lifecycle Methods
@@ -647,7 +662,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         if let customSectionsSharedHeader = headerStyle?.customSectionsSharedHeader,
             section < (customSections!.numberOfSections?(in: tableView) ?? 1) {
             
-            if section == 0 {
+            if section == 0 && !isCustomSectionsEmpty {
                 return customSectionsSharedHeader
             } else {
                 return nil
@@ -655,7 +670,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         }
         
         if let sessionsSharedHeader = headerStyle?.sectionsSharedHeader {
-            if section == numberOfCustomSections {
+            if section == numberOfCustomSections && !isSectionsEmpty {
                 return sessionsSharedHeader
             } else {
                 return nil
