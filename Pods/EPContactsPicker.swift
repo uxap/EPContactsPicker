@@ -670,7 +670,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
         if let customSectionsSharedHeader = headerStyle?.customSectionsSharedHeader,
-            section < (customSections!.numberOfSections?(in: tableView) ?? 1) {
+            section < numberOfCustomSections {
             
             if section == 0 && !isCustomSectionsEmpty {
                 return customSectionsSharedHeader
