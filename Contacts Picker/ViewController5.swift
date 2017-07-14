@@ -71,8 +71,8 @@ extension ViewController5: EPPickerDelegate {
 // Custom Sections
 
 extension ViewController5: EPContactsPickerCustomSections {
-    
-    func setup(tableView:UITableView) {
+
+    func setup(_ contactsPicker: EPContactsPicker, tableView:UITableView) {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CustomSectionCell")
     }
     

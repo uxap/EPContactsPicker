@@ -65,7 +65,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     public var customSections: EPContactsPickerCustomSections? {
         didSet {
             if isViewLoaded {
-                customSections?.setup(tableView: tableView)
+                customSections?.setup(self, tableView: tableView)
                 tableView.reloadData()
             }
         }
@@ -305,7 +305,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     fileprivate func setupCustomSections() {
-        customSections?.setup(tableView: tableView)
+        customSections?.setup(self, tableView: tableView)
     }
     
     fileprivate func registerContactCell() {

@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol EPContactsPickerCustomSections: UITableViewDataSource, UITableViewDelegate {
-    func setup(tableView:UITableView)
+    func setup(_ contactsPicker:EPContactsPicker, tableView:UITableView)
 }
 
 
