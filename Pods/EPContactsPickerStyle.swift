@@ -38,6 +38,8 @@ public struct EPContactsPickerStyle {
     public var showSearchBar = true
     public var showHeader = true
     
+    public var disclosureIndicator: UIImage?
+    
     public init() {
     }
     

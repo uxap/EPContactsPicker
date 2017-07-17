@@ -376,6 +376,10 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         cell.titleTopMargin.constant = style.titleTopMargin
         cell.subtitleTopMargin.constant = style.subtitleTopMargin
         
+        if let disclosureIndicator = style.disclosureIndicator {
+            cell.accessoryView = UIImageView(image:disclosureIndicator)
+        }
+        
         cell.contactTextLabel.font = style.titleFont
         cell.contactTextLabel.textColor = style.titleColor
         cell.contactDetailTextLabel.font = style.subtitleFont

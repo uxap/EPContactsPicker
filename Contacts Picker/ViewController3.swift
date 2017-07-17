@@ -26,6 +26,7 @@ class ViewController3 : UIViewController {
         style.subtitleTopMargin = 6
         style.subtitleFont = UIFont.systemFont(ofSize: 14)
         style.subtitleColor = UIColor.white.withAlphaComponent(0.6)
+        style.disclosureIndicator = UIImage(named:"DisclosureIndicator")
         
         style.backgroundColor = UIColor(colorLiteralRed: 14.0/255.0, green: 15.0/255.0, blue: 26.0/255.0, alpha: 1.0)
         style.cellBackgroundColor = style.backgroundColor
