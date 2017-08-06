@@ -78,14 +78,17 @@ class EPDefaultDataSource : EPContactsDataSource {
         case CNAuthorizationStatus.notDetermined:
             //This case means the user is prompted for the first time for allowing contacts
             contactsStore.requestAccess(for: CNEntityType.contacts, completionHandler: { (granted, error) -> Void in
-                //At this point an alert is provided to the user to provide access to contacts. This will get invoked if a user responds to the alert
-                if  (!granted ){
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        completion?(error)
-                    })
-                }
-                else{
-                    self.loadContacts(contactPicker, completion: completion, contactLoadedHandler: contactLoadedHandler)
+                
+                DispatchQueue.main.async {
+                    
+                    //At this point an alert is provided to the user to provide access to contacts. This will get invoked if a user responds to the alert
+                    if  (!granted ){
+                            completion?(error)
+                    }
+                    else{
+                        self.loadContacts(contactPicker, completion: completion, contactLoadedHandler: contactLoadedHandler)
+                    }
+                    
                 }
             })
             
