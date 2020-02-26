@@ -30,7 +30,7 @@ public class EPContactCell: UITableViewCell {
         
         super.awakeFromNib()
         // Initialization code
-        selectionStyle = UITableViewCellSelectionStyle.none
+        selectionStyle = UITableViewCell.SelectionStyle.none
         contactContainerView.layer.masksToBounds = true
         contactContainerView.layer.cornerRadius = contactContainerView.frame.size.width/2
     }

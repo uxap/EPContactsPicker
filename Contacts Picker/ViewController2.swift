@@ -18,7 +18,7 @@ class ViewController2 : UIViewController {
 
     override func viewDidLoad() {
         
-        addChildViewController(contactsPicker)
+        addChild(contactsPicker)
         contactsPicker.view.frame = view.bounds
         contactsPicker.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(contactsPicker.view)
@@ -29,8 +29,8 @@ class ViewController2 : UIViewController {
         
         let top = topLayoutGuide.length
         let bottom = bottomLayoutGuide.length
-        contactsPicker.tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
-        contactsPicker.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(top, 0, bottom, 0)
+        contactsPicker.tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        contactsPicker.tableView.scrollIndicatorInsets = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         
     }
     

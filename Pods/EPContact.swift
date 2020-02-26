@@ -111,14 +111,14 @@ public struct EPContact {
         let secondChar: Character?
         switch nameOrder {
         case .givenNameFirst:
-            firstChar = firstName.characters.first
-            secondChar = lastName.characters.first
+            firstChar = firstName.first
+            secondChar = lastName.first
         case .familyNameFirst:
-            firstChar = lastName.characters.first
-            secondChar = firstName.characters.first
+            firstChar = lastName.first
+            secondChar = firstName.first
         default:
-            firstChar = firstName.characters.first
-            secondChar = lastName.characters.first
+            firstChar = firstName.first
+            secondChar = lastName.first
         }
         
         
@@ -137,7 +137,7 @@ public struct EPContact {
 
 public extension EPContact {
     
-    public var dictionaryRepresentation: [String:Any?] {
+    var dictionaryRepresentation: [String:Any?] {
         
         var dict = [String:Any]()
         dict["sectionKey"] = sectionKey
@@ -164,7 +164,7 @@ public extension EPContact {
 
 public extension EPContact {
     
-    public init?(dict:[String:Any?]) {
+    init?(dict:[String:Any?]) {
         
         guard let sectionKey = dict["sectionKey"] as? String else {
             return nil

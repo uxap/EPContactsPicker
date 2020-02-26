@@ -28,9 +28,9 @@ class ViewController3 : UIViewController {
         style.subtitleColor = UIColor.white.withAlphaComponent(0.6)
         style.disclosureIndicator = UIImage(named:"DisclosureIndicator")
         
-        style.backgroundColor = UIColor(colorLiteralRed: 14.0/255.0, green: 15.0/255.0, blue: 26.0/255.0, alpha: 1.0)
+        style.backgroundColor = UIColor(red: 14.0/255.0, green: 15.0/255.0, blue: 26.0/255.0, alpha: 1.0)
         style.cellBackgroundColor = style.backgroundColor
-        style.cellHighlightColor = UIColor(colorLiteralRed: 0.608, green: 0.608, blue: 0.608, alpha: 0.3)
+        style.cellHighlightColor = UIColor(red: 0.608, green: 0.608, blue: 0.608, alpha: 0.3)
         style.seperatorColor = UIColor.white.withAlphaComponent(0.08)
         
         style.initialBackgroundColors = [
@@ -54,7 +54,7 @@ class ViewController3 : UIViewController {
     lazy var headerStyle: EPContactsPickerHeaderStyle = {
         
         var style = EPContactsPickerHeaderStyle()
-        style.backgroundColor = UIColor(colorLiteralRed: 25.0/255.0, green: 26.0/255.0, blue: 37.0/255.0, alpha: 1.0)
+        style.backgroundColor = UIColor(red: 25.0/255.0, green: 26.0/255.0, blue: 37.0/255.0, alpha: 1.0)
         style.textColor = UIColor.white
         style.leftMargin = 16
         
@@ -71,7 +71,7 @@ class ViewController3 : UIViewController {
 
     override func viewDidLoad() {
         
-        addChildViewController(contactsPicker)
+        addChild(contactsPicker)
         contactsPicker.view.frame = view.bounds
         contactsPicker.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(contactsPicker.view)
@@ -82,8 +82,8 @@ class ViewController3 : UIViewController {
         
         let top = topLayoutGuide.length
         let bottom = bottomLayoutGuide.length
-        contactsPicker.tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
-        contactsPicker.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(top, 0, bottom, 0)
+        contactsPicker.tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
+        contactsPicker.tableView.scrollIndicatorInsets = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         
     }
     

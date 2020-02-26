@@ -16,18 +16,18 @@ public struct EPContactsPickerStyle {
     public var photoSize = CGSize(width: 40.0, height: 40.0)
     
     public var titleFont = UIFont.systemFont(ofSize: 17.0)
-    public var titleColor = UIColor(colorLiteralRed: 85.0/255.0, green: 85.0/255.0, blue: 85.0/255.0, alpha: 1.0)
+    public var titleColor = UIColor(red: 85.0/255.0, green: 85.0/255.0, blue: 85.0/255.0, alpha: 1.0)
     public var titleTopMargin = CGFloat(10.0)
     
     public var subtitleFont = UIFont.systemFont(ofSize: 15.0)
-    public var subtitleColor = UIColor(colorLiteralRed: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0)
+    public var subtitleColor = UIColor(red: 170.0/255.0, green: 170.0/255.0, blue: 170.0/255.0, alpha: 1.0)
     public var subtitleTopMargin = CGFloat(4)
     
     public var cellHighlightColor: UIColor?
     public var cellBackgroundColor = UIColor.white
     public var backgroundColor = UIColor.white
     public var seperatorColor: UIColor?
-    public var seperatorStyle: UITableViewCellSeparatorStyle?
+    public var seperatorStyle: UITableViewCell.SeparatorStyle?
     
     public var initialFont = UIFont.systemFont(ofSize: 17)
     public var initialColor = UIColor.white

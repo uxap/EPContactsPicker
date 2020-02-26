@@ -50,6 +50,9 @@ class EPDefaultDataSource : EPContactsDataSource {
     }
     
     deinit {
+        guard let observer = observer else {
+            return
+        }
         NotificationCenter.default.removeObserver(observer)
     }
     
@@ -66,8 +69,8 @@ class EPDefaultDataSource : EPContactsDataSource {
             
             let productName = Bundle.main.infoDictionary!["CFBundleName"]!
             
-            let alert = UIAlertController(title: "Unable to access contacts", message: "\(productName) does not have access to contacts. Kindly enable it in privacy settings ", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: {  action in
+            let alert = UIAlertController(title: "Unable to access contacts", message: "\(productName) does not have access to contacts. Kindly enable it in privacy settings ", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .default, handler: {  action in
                 contactPicker.contactDelegate?.epContactPicker(contactPicker, didContactFetchFailed: error)
                 completion?(error)
                 contactPicker.dismiss(animated: true, completion: nil)
@@ -122,6 +125,8 @@ class EPDefaultDataSource : EPContactsDataSource {
                 
             }
             
+        @unknown default:
+            fatalError()
         }
             
     }
@@ -130,7 +135,7 @@ class EPDefaultDataSource : EPContactsDataSource {
         
         let contactsStore = CNContactStore()
         let predicate: NSPredicate
-        if searchText.characters.count > 0 {
+        if searchText.count > 0 {
             predicate = CNContact.predicateForContacts(matchingName: searchText)
             
             do {

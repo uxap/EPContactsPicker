@@ -160,7 +160,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         return
             resultSearchController.isActive &&
                 filteredContacts.count >= 0 &&
-                resultSearchController.searchBar.text?.characters.count ?? 0 > 0
+                resultSearchController.searchBar.text?.count ?? 0 > 0
     }
     
     public var style: EPContactsPickerStyle? {
@@ -294,11 +294,11 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     }
     
     func inititlizeBarButtons() {
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(onTouchCancelButton))
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(onTouchCancelButton))
         self.navigationItem.leftBarButtonItem = cancelButton
         
         if multiSelectEnabled {
-            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(onTouchDoneButton))
+            let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(onTouchDoneButton))
             self.navigationItem.rightBarButtonItem = doneButton
             
         }
@@ -432,13 +432,13 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return nil
         }
         
-        guard let row = contacts.index(where: { element -> Bool in
+        guard let row = contacts.firstIndex(where: { element -> Bool in
             return element.contactId == contact.contactId
         }) else {
             return nil
         }
         
-        guard let section = self.sortedContactKeys.index(of: contact.sectionKey) else {
+        guard let section = self.sortedContactKeys.firstIndex(of: contact.sectionKey) else {
             return nil
         }
         
@@ -474,7 +474,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             
             let key = contact.sectionKey
             
-            if let _ /* section */ = weakSelf.sortedContactKeys.index(of: key) {
+            if let _ /* section */ = weakSelf.sortedContactKeys.firstIndex(of: key) {
                 
                 let _ /* row */ = weakSelf.orderedContacts[key]!.count
                 weakSelf.orderedContacts[key]?.append(contact)
@@ -485,7 +485,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
                 
                 weakSelf.orderedContacts[key] = [contact]
                 weakSelf.sortedContactKeys.append(key)
-                let _ /* section */ = weakSelf.sortedContactKeys.index(of: key)!
+                let _ /* section */ = weakSelf.sortedContactKeys.firstIndex(of: key)!
                 //weakSelf.tableView.insertSections(IndexSet(integer: section), with: .fade)
                 //print("(\(section),\(key))")
                 
@@ -536,7 +536,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! EPContactCell
-        cell.accessoryType = UITableViewCellAccessoryType.none
+        cell.accessoryType = .none
         
         if let style = style {
             setupCell(cell: cell, style: style)
@@ -556,7 +556,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         }
         
         if multiSelectEnabled  && selectedContacts.contains(where: { $0.contactId == contact.contactId }) {
-            cell.accessoryType = UITableViewCellAccessoryType.checkmark
+            cell.accessoryType = .checkmark
         }
         
         if !multiSelectEnabled {
@@ -584,14 +584,14 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         let selectedContact =  cell.contact!
         if multiSelectEnabled {
             //Keeps track of enable=ing and disabling contacts
-            if cell.accessoryType == UITableViewCellAccessoryType.checkmark {
-                cell.accessoryType = UITableViewCellAccessoryType.none
+            if cell.accessoryType == .checkmark {
+                cell.accessoryType = .none
                 selectedContacts = selectedContacts.filter(){
                     return selectedContact.contactId != $0.contactId
                 }
             }
             else {
-                cell.accessoryType = UITableViewCellAccessoryType.checkmark
+                cell.accessoryType = .checkmark
                 selectedContacts.append(selectedContact)
             }
         }
@@ -648,8 +648,8 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             return customSections!.tableView?(tableView, sectionForSectionIndexTitle:title, at:index) ?? 0
         }
         
-        tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: UITableViewScrollPosition.top , animated: false)
-        return sortedContactKeys.index(of: title)! + numberOfCustomSections
+        tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top , animated: false)
+        return sortedContactKeys.firstIndex(of: title)! + numberOfCustomSections
     }
     
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -776,7 +776,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
         }
     }
     
-    open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         guard indexPath.section >= numberOfCustomSections else {
             return customSections?.tableView?(tableView, editingStyleForRowAt: indexPath) ?? .none
         }
@@ -787,7 +787,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     open func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
     }
     
-    open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         guard indexPath.section >= numberOfCustomSections else {
             customSections!.tableView?(tableView, commit: editingStyle, forRowAt: indexPath)
@@ -840,12 +840,12 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
     
     // MARK: - Button Actions
     
-    func onTouchCancelButton() {
+    @objc func onTouchCancelButton() {
         contactDelegate?.epContactPicker(self, didCancel: NSError(domain: "EPContactPickerErrorDomain", code: 2, userInfo: [ NSLocalizedDescriptionKey: "User Canceled Selection"]))
         dismiss(animated: true, completion: nil)
     }
     
-    func onTouchDoneButton() {
+    @objc func onTouchDoneButton() {
         contactDelegate?.epContactPicker(self, didSelectMultipleContacts: selectedContacts)
         dismiss(animated: true, completion: nil)
     }
@@ -859,7 +859,7 @@ open class EPContactsPicker: UIViewController, UISearchResultsUpdating, UISearch
             dataSource.searchContacts(searchText: searchText, completion: { result in
                 
                 self.filteredContacts = result
-                self.showsEmptyView = self.filteredContacts.count == 0 && searchText.characters.count > 0
+                self.showsEmptyView = self.filteredContacts.count == 0 && searchText.count > 0
                 self.tableView.reloadData()
                 
             })
